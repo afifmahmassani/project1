@@ -79,8 +79,12 @@ str(CVD)
 
 ## Chapter 3: Descriptive Statistics
 
-# 3.1 Categorical Variables EDA
+# 3.1 Continuous Variables EDA
 
-# 3.1.2 
+# 3.2 Categorical Variables EDA
+# 3.2.1 Are there any common in CVD patients?
+We choose several factors from the dataset and check if there are some factors that have a significant difference between CVD presented and CVD not presented.
+
+
 
 
