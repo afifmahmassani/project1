@@ -76,3 +76,6 @@ str(CVD)
 12.`Physical activity`: Respondents' physical activity | active | int (0:Do not workout regularly, 1: Workout regularly)
 
 13.`Presence or absence of cardiovascular disease`: Respondent present cardiovascular disease | cardio | int (0:No CVD currently present, 1:CVD currently present)
+
+## Chapter 3: Descriptive Statistics
+
