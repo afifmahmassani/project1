@@ -101,6 +101,35 @@ median(CVD$age)
 mode(CVD$age)
 ```
 
+```{r}
+min(CVD$age)
+
+```
+
+```{r}
+max(CVD$age)
+
+```
+
+
+```{r}
+range(CVD$age)
+```
+
+```{r}
+quantile(CVD$age)
+```
+
+```{r}
+IQR(CVD$age)
+```
+
+```{r}
+var(CVD$age)
+
+sd(CVD$age)
+
+```
 
 
 
