@@ -48,18 +48,18 @@ Descriptive statistics:
 In this dataset we will find out the factors causing the cardio vascular disease. 
 This dataset contains 12 columns with 70000 values or records from different patients.
 The columns are the following:
-Age: is recorded in days
-Height: is recorded in cm
-Weight: is recorded in kg
-Gender: women, men
-Systolic blood pressure: high
-Diastolic blood pressure: low
-Cholesterol: normal, above normal, well above normal
-Glucose: normal, above normal, well above normal
-Smoking: whether patient smokes or not
-Alcohol intake: binary feature:0,1
-Physical activity: binray feature:0,1
-Presence or absence of cardiovascular disease: target variable 
+Age: This is the age of the patient and it is recorded in days
+Height: This is the height of the patient and it is recorded in cm
+Weight: This is the weight of the patient and it is recorded in kg
+Gender: This is the gender of the patient (women, men)
+Systolic blood pressure: This measures the pressure in your arteries when your heart beats (high)
+Diastolic blood pressure: This measures the pressure in your arteries when your heart rests between beats (low)
+Cholesterol: This is the cholesterol quantity (normal, above normal, well above normal)
+Glucose: This is the glucose quantity (normal, above normal, well above normal)
+Smoking: This shows whether the patient smokes or not
+Alcohol intake: This shows the alcohol intake (0,1)
+Physical activity: This shows the physical activity (0,1)
+Presence or absence of cardiovascular disease: This shows the presence or absence of cardiovascular disease 
 
 
 
