@@ -45,7 +45,7 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 
 Descriptive statistics:
-
+In this dataset we will find out the factors causing the cardio vascular disease. 
 
 
 
