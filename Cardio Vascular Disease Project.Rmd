@@ -97,6 +97,13 @@ mean(CVD$age)
 ```{r}
 median(CVD$age)
 ```
+```{r}
+mode(CVD$age)
+```
+
+
+
+
 
 
 
