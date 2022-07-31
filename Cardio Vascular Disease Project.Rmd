@@ -46,7 +46,20 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 Descriptive statistics:
 In this dataset we will find out the factors causing the cardio vascular disease. 
-This dataset contains 13 columns with 70000 values from different people.
+This dataset contains 12 columns with 70000 values or records from different patients.
+The columns are the following:
+Age: 
+Height:
+Weight:
+Gender:
+Systolic blood pressure:
+Diastolic blood pressure:
+Cholesterol:
+Glucose:
+Smoking:
+Alcohol intake:
+Physical activity:
+Presence or absence of cardiovascular disease:
 
 
 
