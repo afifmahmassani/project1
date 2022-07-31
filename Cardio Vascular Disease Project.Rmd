@@ -59,7 +59,16 @@ Glucose: This is the glucose quantity (normal, above normal, well above normal)
 Smoking: This shows whether the patient smokes or not
 Alcohol intake: This shows the alcohol intake (0,1)
 Physical activity: This shows the physical activity (0,1)
-Presence or absence of cardiovascular disease: This shows the presence or absence of cardiovascular disease 
+Presence or absence of cardiovascular disease: This shows the presence or absence of cardiovascular disease
+
+
+
+
+
+
+
+
+
 
 
 
