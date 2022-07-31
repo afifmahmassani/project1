@@ -23,18 +23,10 @@ knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
 ```
 
-## Summary of the dataset
-
+# Summary of the dataset   
+##Load the dataset   
 ```{r}
-summary(cars)
+cardio <- read.csv2("cardio_train.csv", header = TRUE)
+str(cardio)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
