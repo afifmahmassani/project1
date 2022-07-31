@@ -1,6 +1,6 @@
 ---
 title: "Cardio Vascular Disease Project"
-author: "Team 1"
+author: "Team 1: Afif Mahmassani, Turner Luo, Lijia Ren, Steven Tian"
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -26,7 +26,19 @@ options(scientific=T, digits = 3)
 ## Summary of the dataset   
 ### Load the dataset   
 ```{r}
-cardio <- read.csv2("cardio_train.csv", header = TRUE)
-str(cardio)
+cardio_vascular_disease <- read.csv2("cardio_train.csv", header = TRUE)
+str(cardio_vascular_disease)
+```
+Noticed some of the variables should be factor.    
+```{r}
+cardio <- cardio_vascular_disease
+cardio$gender <- factor(cardio_vascular_disease$gender)
+cardio$smoke <- factor(cardio_vascular_disease$smoke)
+cardio$alco <- factor(cardio_vascular_disease$alco)
+cardio$active <- factor(cardio_vascular_disease$active)
+cardio$cardio <- factor(cardio_vascular_disease$cardio)
+```
+```{r, results='markup'}
+xkablesummary(cardio[,2:13], title = "Summary of Cardio Vascular Disease Data")
 ```
 
