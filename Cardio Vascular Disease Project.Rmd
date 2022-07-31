@@ -61,9 +61,21 @@ Alcohol intake: This shows the alcohol intake (0,1)
 Physical activity: This shows the physical activity (0,1)
 Presence or absence of cardiovascular disease: This shows the presence or absence of cardiovascular disease
 
+```{r}
+
+library(ezids)
+#cardio <- data.frame(read.csv("cardio_train.csv"))
+cardio <- api_rfit('cardio')
+str(cardio)
+```
 
 
-
+```{r}
+library(ezids)
+cardio <- data.frame(read.csv("cardio_train.csv"))
+cardio = api_rfit('cardio')
+str(cardio)
+```
 
 
 
