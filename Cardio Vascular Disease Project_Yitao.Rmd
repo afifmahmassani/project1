@@ -23,8 +23,8 @@ knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
 ```
 
-# Summary of the dataset   
-##Load the dataset   
+## Summary of the dataset   
+### Load the dataset   
 ```{r}
 cardio <- read.csv2("cardio_train.csv", header = TRUE)
 str(cardio)
