@@ -16,19 +16,23 @@ output:
 
 ```{r init, include=F}
 library(ezids)
+library(ggplot2)
+library(dplyr)
 ```
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
 ```
+
+```{r}
+CVD <- data.frame(read.csv("cardio_train.csv", sep=";"))
+View(CVD)
+```
+
+
 ## Chapter 1: Introudction to Cardiovascular Diseases (CVDs)
 
-<<<<<<< Updated upstream
-## Summary of the dataset
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-=======
 # 1.1 Basic Information About Cardiovascular Diseases (CVDs)
 
 Cardiovascular Disease is a general name for numerous types of diseases including heart attack, stroke, and heart failure. In 2019 an estimated 17.9 million people died from Cardiovascular Diseases and 85% were due to heart attack and stroke.
@@ -36,24 +40,39 @@ Cardiovascular Disease is a general name for numerous types of diseases includin
 # 1.2 Reasons of Choosing Cardiovascular Disease.
 As living standards are improving over the past few decades, having a healthy lifestyle and avoiding serious illnesses have become people’s priorities and Cardiovascular diseases are the leading cause of death globally our group is interested in finding out some facts about Cardiovascular Disease such as what exactly Cardiovascular Diseases are. What are some factors that are correlate to Cardiovascular Diseases, among those factors what have the strongest correlation to Cardiovascular Diseases? And would a healthy lifestyle help to prevent people from having cardiovascular disease? Therefore, our group choose this dataset about Cardiovascular Diseases
 
-## 
+## Chapter 2: Summary of the Dataset
 
+# 2.1:About the Dataset
+The Cardiovascular Diseases dataset is extracted from Kaggle. It contains information from 70,000 records of patients that provided their age, height, weight, physical condition, and habits. Studying such data can help the public and health organizations identify potential factors that could lead to a higher chance of getting Cardiovascular Diseases, and develop appropriate strategies to reduce the number of patients.
+The dataset is cardio_train.csv. Before doing any analysis on this dataset, we did some research about what every single variable in the dataset represents, why they are included in this dataset, and what variables we will use in our model. With all those information government agents and the public will know how to adjust their habits or lifestyle to prevent getting Cardiovascular Diseases. Therefore, it is crucial to figure out current problems, and then publish the information.
 
- 
->>>>>>> Stashed changes
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+# 2.2: Variables
+```{r}
+str(CVD)
 ```
 
-## Including Plots
+1.`id`: Respondents'id | id | int
 
-You can also embed plots, for example:
+2.`Age`: Respondents' age | age | int (days)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+3.`Height`: Respondents' height | height | int (cm)
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+4.`Weight`: Respondents' weight | weight | num (kg)
+
+5.`Gender`: Respondents'gender | gender  | int (1:Feale|2:Male)
+
+6.`Systolic blood pressure`: Respondents' systolic blood pressure | ap_hi | int 
+
+7.`Diastolic blood pressure`: Respondents' diastolic blood pressure | ap_lo | int
+
+8.`Cholesterol`: Respondents' cholesterol level | cholesterol | int (1: normal, 2: above normal, 3: well above normal)
+
+9.`Glucose`: Respondents' glucose level | gluc | int (1: normal, 2: above normal, 3: well above normal)
+
+10.`Smoking`: Whether respondent smokes or not | smoke | int (0:Do not smoke, 1:Smoke) 
+
+11.`Alcohol intake`: Whether respondent drink or not | alco | int (0:Do not drink, 1: Drink)
+
+12.`Physical activity`: Respondents' physical activity | active | int (0:Do not workout regularly, 1: Workout regularly)
+
+13.`Presence or absence of cardiovascular disease`: Respondent present cardiovascular disease | cardio | int (0:No CVD currently present, 1:CVD currently present)
