@@ -78,15 +78,16 @@ Presence or absence of cardiovascular disease: This shows the presence or absenc
 
 
 
+```{r}
+sapply(CVD, mean, na.rm=TRUE)
 
 
+```
 
+```{r}
+summary(CVD)
 
-
-
-
-
-
+```
 
 
 
