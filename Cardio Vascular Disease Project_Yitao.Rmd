@@ -37,6 +37,8 @@ cardio$smoke <- factor(cardio_vascular_disease$smoke)
 cardio$alco <- factor(cardio_vascular_disease$alco)
 cardio$active <- factor(cardio_vascular_disease$active)
 cardio$cardio <- factor(cardio_vascular_disease$cardio)
+cardio$weight <- as.integer(cardio_vascular_disease$weight)
+str(cardio)
 ```
 ```{r, results='markup'}
 xkablesummary(cardio[,2:13], title = "Summary of Cardio Vascular Disease Data")
