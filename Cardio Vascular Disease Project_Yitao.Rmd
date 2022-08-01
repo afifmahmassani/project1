@@ -80,7 +80,27 @@ cor <- cor(subset(df_num, select = -c(id)), method = "spearman")
 loadPkg("corrplot")
 corrplot(cor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Cardio Vascular Disease Correlation", mar=c(0,0,1,0))
 ```
+  The first model we are performing is logistic regression model. There are 13 variables, first we exclude `id` which is not related to the cardio vascular disease. Then to prevent the multicollinearity, we choose one between `ap_hi` and `ap_lo`. So, we start with a logistic model with 10 variables. We set alpha equal to 0.05, so we should exclude all the variable that have p-value larger than 0.05.   
 ```{r}
-logistic_all <- glm(cardio ~ age + gender + height + weight + ap_hi + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
+logistic_all <- glm(cardio ~ age + gender + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
 summary(logistic_all)
+```
+With p-value of 0.49, we delete `gender`.  
+```{r}
+logistic_1 <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
+summary(logistic_1)
+```
+```{r}
+coef1 <- exp(coef(logistic_1))
+xkabledply(as.table(coef1), title = "Exponential of coefficiant in logistic model")
+```
+
+AUC and ROC:   
+```{r}
+loadPkg("pROC")
+prob <- predict(logistic_1, type = "response")
+df$prob <- prob
+h <- roc(cardio ~ prob, data = df)
+auc(h)
+plot(h)
 ```
