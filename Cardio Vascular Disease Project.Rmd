@@ -73,7 +73,7 @@ str(CVD)
 
 11.`Alcohol intake`: Whether respondent drink or not | alco | int (0:Do not drink, 1: Drink)
 
-12.`Physical activity`: Respondents' physical activity | active | int (0:Do not workout regularly, 1: Workout regularly)
+12.`Physical activity`: Respondents' do not physical activity regularly | active | int (0:Workout regularly, 1: No workout regularly)
 
 13.`Presence or absence of cardiovascular disease`: Respondent present cardiovascular disease | cardio | int (0:No CVD currently present, 1:CVD currently present)
 
@@ -84,6 +84,36 @@ str(CVD)
 # 3.2 Categorical Variables EDA
 # 3.2.1 Are there any common in CVD patients?
 We choose several factors from the dataset and check if there are some factors that have a significant difference between CVD presented and CVD not presented.
+
+Smoke
+```{r,results='markup'}
+library(dplyr)
+smoke_con<-aggregate(CVD$cardio, by=list(CVD$smoke), FUN=length)
+smoke_con<-rename(smoke_con,Smoke = Group.1,CVD = x)
+smoke_con$Smoke[smoke_con$Smoke=="0"] <- 'Not smoke'
+smoke_con$Smoke[smoke_con$Smoke=="1"] <- 'Smoke'
+xkabledply(smoke_con)
+```
+
+alcohol intake 
+```{r,results='markup'}
+alco_con<-aggregate(CVD$cardio, by=list(CVD$alco), FUN=length)
+alco_con<-rename(alco_con,alco = Group.1,CVD = x)
+alco_con$alco[alco_con$alco=="0"] <- 'Not drink'
+alco_con$alco[alco_con$alco=="1"] <- 'Drink'
+xkabledply(alco_con)
+```
+
+Physical Activity
+```{r,results='markup'}
+active_con<-aggregate(CVD$cardio, by=list(CVD$active), FUN=length)
+active_con<-rename(active_con,active = Group.1,CVD = x)
+active_con$active[active_con$active=="0"] <- 'Physical Activity'
+active_con$active[active_con$active=="1"] <- 'Not Physical Activity'
+xkabledply(active_con)
+```
+
+# 3.2.2 Plot comparing different factors
 
 
 
