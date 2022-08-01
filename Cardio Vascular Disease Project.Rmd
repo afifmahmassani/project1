@@ -115,6 +115,26 @@ xkabledply(active_con)
 
 # 3.2.2 Plot comparing different factors
 
+Plot of smoke & CVD
+```{r,results='markup'}
+smoke_pic <- data.frame(table(CVD$smoke,CVD$cardio))
+names(smoke_pic) <- c("Smoke","Cardio","Count")
+ggplot(data=smoke_pic, aes(x=Smoke, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Not smoke", "1" = "Smoke"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of Smoke history and present of CVDs") + ylab("Percentage")
+```
+
+Plot of alcohol intake & CVD
+```{r,results='markup'}
+alco_pic <- data.frame(table(CVD$alco,CVD$cardio))
+names(alco_pic) <- c("alco","Cardio","Count")
+ggplot(data=alco_pic, aes(x=alco, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Not Drink", "1" = "Drink"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of alcohol intake and present of CVDs") + ylab("Percentage")
+```
+
+Plot of physical activity & CVD
+```{r,results='markup'}
+active_pic <- data.frame(table(CVD$active,CVD$cardio))
+names(active_pic) <- c("active","Cardio","Count")
+ggplot(data=active_pic, aes(x=active, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Workout regularly", "1" = "Not workout regularly"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of workout and present of CVDs") + ylab("Percentage")
+```
 
 
 
