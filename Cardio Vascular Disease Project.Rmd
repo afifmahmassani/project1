@@ -79,10 +79,8 @@ str(CVD)
 
 ## Chapter 3: Descriptive Statistics
 
-# 3.1 Continuous Variables EDA
-
-# 3.2 Categorical Variables EDA
-# 3.2.1 Are there any common in CVD patients?
+# 3.1 Categorical Variables EDA
+# 3.1.1 Are there any common in CVD patients?
 We choose several factors from the dataset and check if there are some factors that have a significant difference between CVD presented and CVD not presented.All the tables below will use percentage. 
 
 We start with smoke history and whether CVD are currently presented or not.
@@ -114,7 +112,7 @@ active_con$active[active_con$active=="1"] <- 'Not Physical Activity'
 xkabledply(active_con)
 ```
 
-# 3.2.2 Plot comparing different factors
+# 3.1.2 Plot comparing different factors
 
 Plot of smoke & CVD
 ```{r,results='markup'}
@@ -138,4 +136,5 @@ ggplot(data=active_pic, aes(x=active, y=Count/sum(Count)*100, fill=Cardio)) + ge
 ```
 
 
+# 3.2 Continuous Variables EDA
 
