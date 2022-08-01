@@ -83,8 +83,9 @@ str(CVD)
 
 # 3.2 Categorical Variables EDA
 # 3.2.1 Are there any common in CVD patients?
-We choose several factors from the dataset and check if there are some factors that have a significant difference between CVD presented and CVD not presented.
+We choose several factors from the dataset and check if there are some factors that have a significant difference between CVD presented and CVD not presented.All the tables below will use percentage. 
 
+We start with smoke history and whether CVD are currently presented or not.
 Smoke
 ```{r,results='markup'}
 library(dplyr)
