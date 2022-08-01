@@ -22,9 +22,9 @@ library(ezids)
 knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
 ```
+# Introudction
 
-## Summary of the dataset   
-### Load the dataset   
+# Description of Dataset  
 ```{r}
 cardio_vascular_disease <- read.csv2("cardio_train.csv", header = TRUE)
 str(cardio_vascular_disease)
@@ -39,6 +39,7 @@ cardio$active <- factor(cardio_vascular_disease$active)
 cardio$cardio <- factor(cardio_vascular_disease$cardio)
 cardio$cholesterol <- factor(cardio_vascular_disease$cholesterol)
 cardio$weight <- as.integer(cardio_vascular_disease$weight)
+cardio <- na.omit(cardio)
 str(cardio)
 ``` 
 The variables in the dataset are:   
@@ -58,7 +59,8 @@ The variables in the dataset are:
 * `cardio`: Presence or absence of cardiovascular disease, 1: Absence, 2: Presence
 
 
-```{r, results='markup'}
+```{r}
 xkablesummary(cardio[,2:13], title = "Summary of Cardio Vascular Disease Data")
 ```
+# Categorical Variables EDA  
 
