@@ -37,9 +37,27 @@ cardio$smoke <- factor(cardio_vascular_disease$smoke)
 cardio$alco <- factor(cardio_vascular_disease$alco)
 cardio$active <- factor(cardio_vascular_disease$active)
 cardio$cardio <- factor(cardio_vascular_disease$cardio)
+cardio$cholesterol <- factor(cardio_vascular_disease$cholesterol)
 cardio$weight <- as.integer(cardio_vascular_disease$weight)
 str(cardio)
-```
+``` 
+The variables in the dataset are:   
+
+* `id`: Patient ID   
+* `age`: Age (in days)
+* `gender`: Gender, 1: Female, 2: Male
+* `height`: Height (in cm)
+* `weight`: Weight (in kg)
+* `ap_hi`: Systolic blood pressure
+* `ap_lo`: Diastolic blood pressure
+* `cholesterol`: Cholesterol, 1: Normal, 2: Above Normal, 3: Well Above Normal
+* `glue`: Glucose, 1: Normal, 2: Above Normal, 3: Well Above Normal
+* `smoke`: Whether patient smokes or not, 1: Do not smoke, 2: Smoke
+* `alco`: Alcohol intake, 1: Do not drink alcohol, 2: Drink alcohol
+* `active`: Physical activity, 1: Do not exercise, 2: Exercise
+* `cardio`: Presence or absence of cardiovascular disease, 1: Absence, 2: Presence
+
+
 ```{r, results='markup'}
 xkablesummary(cardio[,2:13], title = "Summary of Cardio Vascular Disease Data")
 ```
