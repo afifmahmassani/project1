@@ -120,7 +120,7 @@ xkabledply(active_con)
 
 # 3.1.2 Plot comparing different factors
 
-Plot of smoke & CVD
+Plot of Smoke & CVD
 ```{r,results='markup'}
 smoke_pic <- data.frame(table(CVD$smoke,CVD$cardio))
 names(smoke_pic) <- c("Smoke","Cardio","Count")
@@ -142,6 +142,37 @@ ggplot(data=active_pic, aes(x=active, y=Count/sum(Count)*100, fill=Cardio)) + ge
 ```
 
 # 3.1.3 Chi-Square Tests
+
+Since there are 
+
+Chi-square test for Smoke & CVD presence
+```{r,results='hide'}
+smoke_cvd = table(CVD$cardio, CVD$smoke)
+```
+
+```{r,results='markup'}
+sctest<- chisq.test(smoke_cvd)
+sctest
+```
+
+Chi-square test for Alcohol intake & CVD presence
+```{r,results='hide'}
+al_cvd = table(CVD$cardio, CVD$alco)
+```
+```{r,results='markup'}
+alctest<- chisq.test(al_cvd)
+alctest
+```
+
+Chi-square test for Physical Activity & CVD presence
+```{r,results='hide'}
+act_cvd = table(CVD$cardio, CVD$active)
+```
+```{r,results='markup'}
+act_test<- chisq.test(act_cvd)
+act_test
+```
+
 
 # 3.2 Continuous Variables EDA
 
