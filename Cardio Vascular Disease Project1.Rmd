@@ -155,6 +155,24 @@ sctest<- chisq.test(smoke_cvd)
 sctest
 ```
 
+Chi-square test for Alcohol intake & CVD presence
+```{r,results='hide'}
+al_cvd = table(CVD$cardio, CVD$alco)
+```
+```{r,results='markup'}
+alctest<- chisq.test(al_cvd)
+alctest
+```
+
+Chi-square test for Physical Activity & CVD presence
+```{r,results='hide'}
+act_cvd = table(CVD$cardio, CVD$active)
+```
+```{r,results='markup'}
+act_test<- chisq.test(act_cvd)
+act_test
+```
+
 
 # 3.2 Continuous Variables EDA
 
