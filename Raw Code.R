@@ -71,3 +71,8 @@ df$prob <- prob
 h <- roc(cardio ~ prob, data = df)
 auc(h)
 plot(h)
+#McFadden
+loadPkg("pscl")
+Logitpr2 = pR2(logistic_2)
+Logitpr2
+
