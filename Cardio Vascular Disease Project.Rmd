@@ -57,3 +57,38 @@ plot(pressure)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+4.
+# Chapter 4: Continuous Variables EDA to Cardiovascular Diseases (CVDs)
+
+After a brief overview of the dataset, it tells that there are 3 continuous variables, age, height and weight.
+
+## 4.1 KDE plot of continuous variables
+
+```{r init, include=F}
+library(ezids)
+library(ggplot2)
+library(dplyr)
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+```
+
+
+
+```{r}
+
+CVD <- data.frame(read.csv("cardio_train.csv", sep=";"))
+View(CVD)
+
+
+```
+
+
+```{r}
+
+str(CVD)
+head(CVD)
+```
