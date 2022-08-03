@@ -98,7 +98,9 @@ str(CVD)
 
 ```
 
-```{r, results="markup"}
+
+```{r setup, include=FALSE}
+
 
 CVD$cardio <- factor(CVD$cardio)
 str(CVD)
@@ -109,18 +111,24 @@ str(CVD)
 
 
 
-```{r, results="markup"}
+
+```{r setup, include=FALSE}
+
 CVD_new<- data.frame(CVD)
 CVD_new
 ```
-```{r, results="markup"}
+
+```{r setup, include=FALSE}
+
 
 levels(CVD_new$cardio) <- c("No CVD Present", "CVD Present") 
 str(CVD_new)
 
 ```
 
-```{r, results="markup"}
+
+```{r setup, include=FALSE}
+
 
 
 CVD_new$cardio[CVD_new$cardio=="0"] <- 'No CVD Present'
@@ -213,7 +221,7 @@ We can use AUC and ROC to measure model 2 and model 3. AUC (Area Under The Curve
 For model 2:
 
 
-```{r}
+```{r, results="markup"}
 prob <- predict(lm2,CVD, type = c("response"))
 CVD$prob <- prob
 library(pROC)
@@ -226,7 +234,7 @@ The AUC value is 0.668. As 0.668 is much less than 1, this model is not good eno
 
 Below is the summary of model 2.
 
-```{r fitmodel,results=TRUE}
+````{r, results="markup"}
 xkabledply(lm2, title="summary of model 2")
 ```
 
@@ -234,7 +242,7 @@ For model 3:
 
 
 
-```{r}
+```{r, results="markup"}
 prob1 <- predict(lm3,CVD, type = c("response"))
 CVD$prob1 <- prob1
 library(pROC)
@@ -247,7 +255,7 @@ The AUC value is 0.671. As 0.671 is much less than 1 and 0.671 is more than 0.66
 
 Below is the summary of model 3.
 
-```{r fitmodel,results=TRUE}
+```{r, results="markup"}
 xkabledply(lm3, title="summary of model 3")
 ```
 
@@ -263,7 +271,7 @@ From the results of above variables, we could find that some of the above variab
 
 As most of variables are factors, we check their Spearman correlations.
 
-```{r }
+```{r init, include=F}
 show(CVD_new)
 ```
 
@@ -281,10 +289,10 @@ str(CVDNum)
 
 # convert categorical variable as numeric for spearman method
 for(i in 1:13){
-  # tenure, MonthlyCharges, TotalCharges
+  # age, height, weight
   if (!(i %in% c(2, 4, 5))){
     CVDNum[,i] = as.numeric(CVDNum[,i])
-  }
+              }
 }
 str(CVDNum)
 
@@ -302,6 +310,122 @@ corrplot(CVDcor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,t
 ```
 Larger circle means higher correlation. We can see that CVD has negative correlation with cholesterol and height, which means that person who has shorter height or has high cholesterol is less likely to have Cardio Vascular Disease. Person who smoke and has high level cholesterol is also more likely to have CVD. So it makes sense that cholesterol  and smoke have positive correlation, which means most person who smoke also have high level cholesterol .
 
+## 5.2 Will Age influence the CVD rate with other variables?
+
+
+```{r init, include=F}
+CVD_new$gluc<- factor(CVD_new$gluc)
+CVD_new$gender<- factor(CVD_new$gender)
+CVD_new$smoke<- factor(CVD_new$smoke)
+CVD_new$alco<- factor(CVD_new$alco)
+CVD_new$active <- factor(CVD_new$active)
+str(CVD_new)
+
+```
+
+```{r init, include=F}
+CVD_factor<- data.frame(CVD_new)
+CVD_factor
+```
+
+```{r init, include=F}
+
+library(patchwork)
+```
+
+```{r, results="markup"}
+
+
+a1 <- ggplot(CVD_factor,aes(x = smoke , y = age , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Smoke") + ylab("Age")
+
+
+a2 <- ggplot(CVD_factor,aes(x = alco , y = age , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Alco") + ylab("Age")
+
+
+a3 <- ggplot(CVD_factor, aes(x=height, y=age, color= cardio)) +
+  geom_point(size=.5,alpha=0.4)
+
+
+```
+
+```{r, results="markup"}
+
+
+a3/ (a1+a2) + plot_annotation(title = 'Age Plot')
+```
+First, Age and height show no correlation.
+
+Second, for Smoke, the sample groups of smoke("1") and order age have higher CVD rates .
+
+Finally, for cholesterol, people are also prone to CVD when drink alco("1") and order age.
+
+## 5.3 Will Height influence the CVD rate with other variables?
+
+
+```{r, results="markup"}
+
+
+h1 <- ggplot(CVD_factor,aes(x = active , y = height , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Active") + ylab("Height")
+
+
+
+h2 <- ggplot(CVD_factor, aes(x=weight, y=height, color= cardio)) +
+  geom_point(size=0.5,alpha=0.4)
+
+
+```
+
+
+
+```{r, results="markup"}
+
+
+h1/ h2 + plot_annotation(title = 'Height Plot')
+```
+
+First, for Active, the sample groups of active("1") have little higher CVD rates.
+
+Second, weight and height show a little positive correlation .
+
+
+
+## 5.4 Will Weight influence the CVD rate with other variables?
+
+
+```{r, results="markup"}
+
+
+w1 <- ggplot(CVD_factor,aes(x = active , y = weight , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Active") + ylab("Weight")
+
+
+w2 <- ggplot(CVD_factor,aes(x = alco , y = weight , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Alco") + ylab("Weight")
+
+
+
+
+```
+
+
+
+```{r, results="markup"}
+
+
+w1/ w2 + plot_annotation(title = 'Weight Plot')
+```
+
+First, for Active, the sample groups of  active("1") have little higher CVD rates 
+
+Second, for Alco, the sample groups of no alco ("0") have little higher CVD rates.
 
 
 
