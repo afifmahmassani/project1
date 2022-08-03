@@ -47,6 +47,9 @@ The Cardiovascular Diseases dataset is extracted from Kaggle. It contains inform
 The dataset is cardio_train.csv. Before doing any analysis on this dataset, we did some research about what every single variable in the dataset represents, why they are included in this dataset, and what variables we will use in our model. With all those information government agents and the public will know how to adjust their habits or lifestyle to prevent getting Cardiovascular Diseases. Therefore, it is crucial to figure out current problems, and then publish the information.
 
 # 2.2: Variables
+
+There are a total of 13 variables in this dataset, including integer, and numeric, we will only use part of the variables in our dataset. There are some outliers in this model. However, overall they do not have a strong impact on our model, and we decided not to remove them. Also for our model, we did some cleanup and convert some of the variables into factor variables so we can better process them.  
+
 ```{r}
 str(CVD)
 ```
@@ -84,6 +87,7 @@ str(CVD)
 We choose several factors from the dataset and check if there are some factors that have a significant difference between CVD presented and CVD not presented.All the tables below will use percentage. 
 
 We start with smoke history and whether CVD are currently presented or not.
+
 Smoke
 ```{r,results='markup'}
 library(dplyr)
@@ -96,6 +100,8 @@ smoke_con$CVD_presence[smoke_con$CVD_presence=="1"] <- 'Present'
 xkabledply(smoke_con)
 ```
 
+The result showed most respondents do not smoke, and almost half of the respondents have CVD currently presented. 
+
 alcohol intake 
 ```{r,results='markup'}
 alco_con<-aggregate(CVD$cardio,by=list(CVD$alco,CVD$cardio), FUN=length)
@@ -106,6 +112,8 @@ alco_con$CVD_presence[alco_con$CVD_presence=="0"] <- 'Not Present'
 alco_con$CVD_presence[alco_con$CVD_presence=="1"] <- 'Present'
 xkabledply(alco_con)
 ```
+
+The result showed most respondents do not drink, and almost half of the respondents have CVD currently presented. 
 
 Physical Activity
 ```{r,results='markup'}
@@ -118,7 +126,11 @@ active_con$CVD_presence[active_con$CVD_presence=="1"] <- 'Present'
 xkabledply(active_con)
 ```
 
+The result showed most respondents do not physical activity regularly, and most of the respondents have CVD currently presented. However, there are more people who have physical activity regularly compared to smoking and drinking. 
+
 # 3.1.2 Plot comparing different factors
+
+With all the tables above, we plot graphs accordingly, from the graphs we will have a better idea to see if there are any variables that may have a significant impact on getting Cardio Vascular Diseases. 
 
 Plot of Smoke & CVD
 ```{r,results='markup'}
@@ -140,6 +152,8 @@ active_pic <- data.frame(table(CVD$active,CVD$cardio))
 names(active_pic) <- c("active","Cardio","Count")
 ggplot(data=active_pic, aes(x=active, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Workout regularly", "1" = "Not workout regularly"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of workout and present of CVDs") + ylab("Percentage")
 ```
+
+The graphs proved the results are pretty clear that most respondents do not have a smoke history or drinking history while there are more people who have physical activity regularly. However, from the graphs the chance of  
 
 # 3.1.3 Chi-Square Tests
 
