@@ -64,6 +64,10 @@ After a brief overview of the dataset, it tells that there are 3 continuous vari
 
 ## 4.1 KDE plot of continuous variables
 
+
+
+KDE plot represents the data using a continuous probability density curve in one or more dimensions. We can easily observe the distribution of samples with kde plot
+
 ```{r init, include=F}
 library(ezids)
 library(ggplot2)
@@ -79,7 +83,7 @@ options(scientific=T, digits = 3)
 
 
 
-```{r}
+```{r setup, include=FALSE}
 
 CVD <- data.frame(read.csv("cardio_train.csv", sep=";"))
 View(CVD)
@@ -88,7 +92,7 @@ View(CVD)
 ```
 
 
-```{r}
+```{r setup, include=FALSE}
 
 str(CVD)
 
@@ -101,8 +105,31 @@ CVD$cardio <- factor(CVD$cardio)
 
 ```
 
-```{r}
-cols<-c("0"="green","1"="blue")
+
+```{r, results="markup"}
+
+levels(CVD$cardio) <- c("No CVD Present", "CVD Present") 
+str(CVD)
+
+```
+
+
+```{r, results="markup"}
+CVD_new<-CVD
+
+CVD_new$cardio[CVD_new$cardio=="0"] <- 'No CVD Present'
+CVD_new$cardio[CVD_new$cardio=="1"] <- 'CVD Present'
+show(CVD_new)
+```
+
+
+
+
+
+
+
+```{r, results="markup"}
+cols<-c("No CVD Present"="green","CVD Present"="blue")
 
 ```
 
@@ -112,8 +139,8 @@ cols<-c("0"="green","1"="blue")
 
 
 
-```{r}
-age_kdeplot <- ggplot(data = CVD, aes(x = age, color =cardio)) + 
+```{r, results="markup"}
+age_kdeplot <- ggplot(data = CVD_new, aes(x = age, color =cardio)) + 
             geom_density(aes(fill = cardio), alpha = 0.8) + 
              scale_fill_manual(values =cols) +
               labs(title="KDEplot for age") +
@@ -125,8 +152,8 @@ age_kdeplot
 ```
 
 
-```{r}
-age_kdeplot <- ggplot(data = CVD, aes(x = height, color = cardio)) + 
+```{r, results="markup"}
+age_kdeplot <- ggplot(data = CVD_new, aes(x = height, color = cardio)) + 
             geom_density(aes(fill = cardio), alpha = 0.8) + 
              scale_fill_manual(values =cols) +
               labs(title="KDEplot for height") +
@@ -139,8 +166,8 @@ age_kdeplot
 
 
 
-```{r}
-age_kdeplot <- ggplot(data = CVD, aes(x = weight, color = cardio)) + 
+```{r, results="markup"}
+age_kdeplot <- ggplot(data = CVD_new, aes(x = weight, color = cardio)) + 
             geom_density(aes(fill = cardio), alpha = 0.8) + 
              scale_fill_manual(values= cols) +
               labs(title="KDEplot for weight") +
@@ -151,32 +178,33 @@ age_kdeplot
 
 ```
 
-
-
+As we can see from kdeplot for age, people with higher age are more likely to have CVD. And from kdeplot for height  and weight ,  we can find that  people with CDV and without CDV have very similar distributions. From these 3 kde plots, which means,CVD may be positive correlated with age. Finally, weight may only make a little attribution to people presenting CVD.
 
 ## 4.2 Logistic regression
 
 The logit model is often used for classification and predictive analytics. Logistic regression estimates the probability of an event occurring, such as voted or didn’t vote, based on a given dataset of independent variables. Since the outcome is a probability, the dependent variable is bounded between 0 and 1(binary outcome). In this case, "cardio"  is the binary outcome; as s result, we choose logistic regression to predict.
 
 
-```{r}
+```{r, results="markup"}
 
 
 lm1 <- glm(cardio~age, family = binomial(link = "logit"), data = CVD)
-lm2 <- glm(cardio~age + height, family = binomial(link = "logit"), data = CVD)
-lm3 <- glm(cardio~height + weight, family = binomial(link = "logit"), data = CVD)
+lm2 <- glm(cardio~age + weight, family = binomial(link = "logit"), data = CVD)
+lm3 <- glm(cardio~age+ height + weight, family = binomial(link = "logit"), data = CVD)
 anovat <- anova(lm1,lm2,lm3, test="LRT")
 anovat
 
 ```
 
-As it is shown above, model 2 is better than model 1 and model 3. In addition, model 2 is at 99% significant level.
+As it is shown above, model 2 and 3 is better than model 1 . In addition, model 2 and 3 is at 100% significant level.
 
 
 
 ## 4.3 AUC and ROC Curve
 
-We can use AUC and ROC to measure model 2. AUC (Area Under The Curve) - ROC (Receiver Operating Characteristics) curve is a performance measurement for the classification problems at various threshold settings. ROC is a probability curve and AUC represents the degree or measure of separability. It tells how much the model is capable of distinguishing between classes. Higher the AUC, the better the model is at predicting 0 classes as 0 and 1 classes as 1. For summarize, the Higher the AUC, the better the model is.
+We can use AUC and ROC to measure model 2 and model 3. AUC (Area Under The Curve) - ROC (Receiver Operating Characteristics) curve is a performance measurement for the classification problems at various threshold settings. ROC is a probability curve and AUC represents the degree or measure of separability. It tells how much the model is capable of distinguishing between classes. Higher the AUC, the better the model is at predicting 0 classes as 0 and 1 classes as 1. For summarize, the Higher the AUC, the better the model is.
+
+For model 2:
 
 
 ```{r}
@@ -187,7 +215,7 @@ g<- roc(cardio~prob, data = CVD)
 plot(g, main = "ROC curve of model 2")
 auc(CVD$cardio, prob)
 ```
-The AUC value is 0.636. As 0.636 is much less than 1, this model is not good enough.
+The AUC value is 0.668. As 0.668 is much less than 1, this model is not good enough.
 
 
 Below is the summary of model 2.
@@ -196,10 +224,47 @@ Below is the summary of model 2.
 xkabledply(lm2, title="summary of model 2")
 ```
 
+For model 3:
 
 
 
-In the 3 continuous variables, `cardio` has positive coefficients with`age` and `height` . It means when we have a customer with older `age` and higher `height`, he has more probabilities to have Cardio Vascular Disease. And `weight` is not significant influence factor to customer `cardio` rates in 3 continuous variables.
+```{r}
+prob1 <- predict(lm3,CVD, type = c("response"))
+CVD$prob1 <- prob1
+library(pROC)
+g<- roc(cardio~prob1, data = CVD)
+plot(g, main = "ROC curve of model 3")
+auc(CVD$cardio, prob1)
+```
+The AUC value is 0.671. As 0.671 is much less than 1 and 0.671 is more than 0.668, this model is not good enough but is better than model 2.
 
 
-`
+Below is the summary of model 3.
+
+```{r fitmodel,results=TRUE}
+xkabledply(lm3, title="summary of model 3")
+```
+
+In the 3 continuous variables, `cardio` has positive correlation with `age` and `weight` ; it also has negative correlation with`height` . It means when a person with  higher `weight` and shorter `height`, he has more probabilities to have Cardio Vascular Disease. And `age` is not significant influence factor to people `cardio` rates in 3 continuous variables.
+
+
+# 5 Chapter 5: EDA on the joint effect of influencing factors
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
