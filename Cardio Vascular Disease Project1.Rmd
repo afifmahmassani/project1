@@ -92,7 +92,7 @@ Smoke
 ```{r,results='markup'}
 library(dplyr)
 smoke_con<-aggregate(CVD$cardio, by=list(CVD$smoke,CVD$cardio), FUN=length)
-smoke_con<-rename(smoke_con,Smoke = Group.1,CVD_presence = Group.2,CVD = x)
+smoke_con<-rename(smoke_con,Smoke = Group.1,CVD_presence = Group.2,Count = x)
 smoke_con$Smoke[smoke_con$Smoke=="0"] <- 'Not smoke'
 smoke_con$Smoke[smoke_con$Smoke=="1"] <- 'Smoke'
 smoke_con$CVD_presence[smoke_con$CVD_presence=="0"] <- 'Not Present'
@@ -105,7 +105,7 @@ The result showed most respondents do not smoke, and almost half of the responde
 alcohol intake 
 ```{r,results='markup'}
 alco_con<-aggregate(CVD$cardio,by=list(CVD$alco,CVD$cardio), FUN=length)
-alco_con<-rename(alco_con,alco = Group.1,CVD_presence = Group.2,CVD = x)
+alco_con<-rename(alco_con,alco = Group.1,CVD_presence = Group.2,Count = x)
 alco_con$alco[alco_con$alco=="0"] <- 'Not drink'
 alco_con$alco[alco_con$alco=="1"] <- 'Drink'
 alco_con$CVD_presence[alco_con$CVD_presence=="0"] <- 'Not Present'
@@ -118,7 +118,7 @@ The result showed most respondents do not drink, and almost half of the responde
 Physical Activity
 ```{r,results='markup'}
 active_con<-aggregate(CVD$cardio, by=list(CVD$active,CVD$cardio), FUN=length)
-active_con<-rename(active_con,active = Group.1,CVD_presence = Group.2,CVD = x)
+active_con<-rename(active_con,active = Group.1,CVD_presence = Group.2,Count = x)
 active_con$active[active_con$active=="0"] <- 'Physical Activity'
 active_con$active[active_con$active=="1"] <- 'Not Physical Activity'
 active_con$CVD_presence[active_con$CVD_presence=="0"] <- 'Not Present'
@@ -153,13 +153,19 @@ names(active_pic) <- c("active","Cardio","Count")
 ggplot(data=active_pic, aes(x=active, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Workout regularly", "1" = "Not workout regularly"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of workout and present of CVDs") + ylab("Percentage")
 ```
 
-The graphs proved the results are pretty clear that most respondents do not have a smoking history or drinking history while there are more people who have physical activity regularly. However, from the graphs the chance of  
+The graphs proved the results are pretty clear that most respondents do not have a smoking history or drinking history while there are more people who have physical activity regularly. However, from the graphs the chance of getting Cardio-Vascular Diseases seems pretty even regarding their lifestyle. We will use chi-square test below to further test if these variables are independent from whether Cardio-Vascular Diseases are presented. 
 
 # 3.1.3 Chi-Square Tests
 
-Since there are 
+The results of the chi-square test result are listed below accordingly. 
+
 
 Chi-square test for Smoke & CVD presence
+
+Are they independent?
+- H0: CVD presence and smoking are independent.
+- H1: They are not independent.
+
 ```{r,results='hide'}
 smoke_cvd = table(CVD$cardio, CVD$smoke)
 ```
@@ -169,7 +175,14 @@ sctest<- chisq.test(smoke_cvd)
 sctest
 ```
 
+Since the p-value is 4e-05 < 0.05, we reject the null hypothesis, therefore smoking has a significant impact on whether cardio-vascular diseases are presented. 
+
 Chi-square test for Alcohol intake & CVD presence
+
+Are they independent?
+- H0: CVD presence and drinking are independent.
+- H1: They are not independent.
+
 ```{r,results='hide'}
 al_cvd = table(CVD$cardio, CVD$alco)
 ```
@@ -178,7 +191,14 @@ alctest<- chisq.test(al_cvd)
 alctest
 ```
 
+Since the p-value is 0.05 ≤ 0.05, we reject the null hypothesis, therefore drink has a significant impact on whether cardio-vascular diseases are presented. 
+
 Chi-square test for Physical Activity & CVD presence
+
+Are they independent?
+- H0: CVD presence and physical activity are independent.
+- H1: They are not independent.
+
 ```{r,results='hide'}
 act_cvd = table(CVD$cardio, CVD$active)
 ```
@@ -187,6 +207,7 @@ act_test<- chisq.test(act_cvd)
 act_test
 ```
 
+Since the p-value is 2e-16 < 0.05, we reject the null hypothesis, therefore physical activity has a significant impact on whether cardio-vascular diseases are presented. 
 
 # 3.2 Continuous Variables EDA
 
