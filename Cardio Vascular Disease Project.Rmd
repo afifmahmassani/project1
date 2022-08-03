@@ -101,25 +101,31 @@ str(CVD)
 ```{r, results="markup"}
 
 CVD$cardio <- factor(CVD$cardio)
-
-
-```
-
-
-```{r, results="markup"}
-
-levels(CVD$cardio) <- c("No CVD Present", "CVD Present") 
 str(CVD)
 
 ```
 
 
+
+
+
 ```{r, results="markup"}
-CVD_new<-CVD
+CVD_new<- data.frame(CVD)
+CVD_new
+```
+```{r, results="markup"}
+
+levels(CVD_new$cardio) <- c("No CVD Present", "CVD Present") 
+str(CVD_new)
+
+```
+
+```{r, results="markup"}
+
 
 CVD_new$cardio[CVD_new$cardio=="0"] <- 'No CVD Present'
 CVD_new$cardio[CVD_new$cardio=="1"] <- 'CVD Present'
-show(CVD_new)
+CVD_new
 ```
 
 
@@ -251,18 +257,50 @@ In the 3 continuous variables, `cardio` has positive correlation with `age` and 
 # 5 Chapter 5: EDA on the joint effect of influencing factors
 
 
+From the results of above variables, we could find that some of the above variables have a significant effect on CVD. Next, we choose to graph the groups of variables with relatively large correlation coefficients one by one to explore how they affect the Cardio Vascular Disease.
+
+## 5.1 Simple correlations
+
+As most of variables are factors, we check their Spearman correlations.
+
+```{r }
+show(CVD_new)
+```
 
 
 
 
+```{r, results="markup"}
 
+CVDNum = CVD
 
+str(CVDNum)
+```
 
+```{r, results="markup"}
 
+# convert categorical variable as numeric for spearman method
+for(i in 1:13){
+  # tenure, MonthlyCharges, TotalCharges
+  if (!(i %in% c(2, 4, 5))){
+    CVDNum[,i] = as.numeric(CVDNum[,i])
+  }
+}
+str(CVDNum)
 
+```
 
+```{r, results="markup"}
 
+# corrplot with spearman method for categorical variables
+CVDcor <- cor(subset(CVDNum, select=-c(id, prob)), method="spearman")
+#CVDcor
+loadPkg("corrplot")
+#corrplot.mixed(CVDcor, tl.pos = "lt", number.cex = .5, tl.cex=0.8)
+corrplot(CVDcor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Spearman Correlation for CVD", mar=c(0,0,1,0))
 
+```
+Larger circle means higher correlation. We can see that CVD has negative correlation with cholesterol and height, which means that person who has shorter height or has high cholesterol is less likely to have Cardio Vascular Disease. Person who smoke and has high level cholesterol is also more likely to have CVD. So it makes sense that cholesterol  and smoke have positive correlation, which means most person who smoke also have high level cholesterol .
 
 
 
