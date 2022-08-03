@@ -68,6 +68,7 @@ After a brief overview of the dataset, it tells that there are 3 continuous vari
 library(ezids)
 library(ggplot2)
 library(dplyr)
+library(ggpubr)
 ```
 
 
@@ -90,5 +91,115 @@ View(CVD)
 ```{r}
 
 str(CVD)
-head(CVD)
+
 ```
+
+```{r, results="markup"}
+
+CVD$cardio <- factor(CVD$cardio)
+
+
+```
+
+```{r}
+cols<-c("0"="green","1"="blue")
+
+```
+
+
+
+
+
+
+
+```{r}
+age_kdeplot <- ggplot(data = CVD, aes(x = age, color =cardio)) + 
+            geom_density(aes(fill = cardio), alpha = 0.8) + 
+             scale_fill_manual(values =cols) +
+              labs(title="KDEplot for age") +
+               labs(x="age", y="density") +
+                theme(legend.position="top")
+age_kdeplot
+
+
+```
+
+
+```{r}
+age_kdeplot <- ggplot(data = CVD, aes(x = height, color = cardio)) + 
+            geom_density(aes(fill = cardio), alpha = 0.8) + 
+             scale_fill_manual(values =cols) +
+              labs(title="KDEplot for height") +
+               labs(x="height", y="density") +
+                theme(legend.position="top")
+age_kdeplot
+
+
+```
+
+
+
+```{r}
+age_kdeplot <- ggplot(data = CVD, aes(x = weight, color = cardio)) + 
+            geom_density(aes(fill = cardio), alpha = 0.8) + 
+             scale_fill_manual(values= cols) +
+              labs(title="KDEplot for weight") +
+               labs(x="weight", y="density") +
+                theme(legend.position="top")
+age_kdeplot
+
+
+```
+
+
+
+
+## 4.2 Logistic regression
+
+The logit model is often used for classification and predictive analytics. Logistic regression estimates the probability of an event occurring, such as voted or didn’t vote, based on a given dataset of independent variables. Since the outcome is a probability, the dependent variable is bounded between 0 and 1(binary outcome). In this case, "cardio"  is the binary outcome; as s result, we choose logistic regression to predict.
+
+
+```{r}
+
+
+lm1 <- glm(cardio~age, family = binomial(link = "logit"), data = CVD)
+lm2 <- glm(cardio~age + height, family = binomial(link = "logit"), data = CVD)
+lm3 <- glm(cardio~height + weight, family = binomial(link = "logit"), data = CVD)
+anovat <- anova(lm1,lm2,lm3, test="LRT")
+anovat
+
+```
+
+As it is shown above, model 2 is better than model 1 and model 3. In addition, model 2 is at 99% significant level.
+
+
+
+## 4.3 AUC and ROC Curve
+
+We can use AUC and ROC to measure model 2. AUC (Area Under The Curve) - ROC (Receiver Operating Characteristics) curve is a performance measurement for the classification problems at various threshold settings. ROC is a probability curve and AUC represents the degree or measure of separability. It tells how much the model is capable of distinguishing between classes. Higher the AUC, the better the model is at predicting 0 classes as 0 and 1 classes as 1. For summarize, the Higher the AUC, the better the model is.
+
+
+```{r}
+prob <- predict(lm2,CVD, type = c("response"))
+CVD$prob <- prob
+library(pROC)
+g<- roc(cardio~prob, data = CVD)
+plot(g, main = "ROC curve of model 2")
+auc(CVD$cardio, prob)
+```
+The AUC value is 0.636. As 0.636 is much less than 1, this model is not good enough.
+
+
+Below is the summary of model 2.
+
+```{r fitmodel,results=TRUE}
+xkabledply(lm2, title="summary of model 2")
+```
+
+
+
+
+In the 3 continuous variables, `cardio` has positive coefficients with`age` and `height` . It means when we have a customer with older `age` and higher `height`, he has more probabilities to have Cardio Vascular Disease. And `weight` is not significant influence factor to customer `cardio` rates in 3 continuous variables.
+
+
+`
