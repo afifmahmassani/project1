@@ -1,0 +1,106 @@
+---
+title: "Cardio Vascular Disease Project"
+author: "Team 1: Afif Mahmassani, Turner Luo, Lijia Ren, Steven Tian"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r init, include=F}
+library(ezids)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+```
+# Introudction
+
+# Description of Dataset  
+```{r}
+cardio_vascular_disease <- read.csv2("cardio_train.csv", header = TRUE)
+str(cardio_vascular_disease)
+```
+Noticed some of the variables should be factor.    
+```{r}
+df <- cardio_vascular_disease
+df$gender <- factor(cardio_vascular_disease$gender)
+df$smoke <- factor(cardio_vascular_disease$smoke)
+df$alco <- factor(cardio_vascular_disease$alco)
+df$active <- factor(cardio_vascular_disease$active)
+df$cardio <- factor(cardio_vascular_disease$cardio)
+df$cholesterol <- factor(cardio_vascular_disease$cholesterol)
+df$weight <- as.integer(cardio_vascular_disease$weight)
+df <- na.omit(df)
+str(df)
+``` 
+The variables in the dataset are:   
+
+* `id`: Patient ID   
+* `age`: Age (in days)
+* `gender`: Gender, 1: Female, 2: Male
+* `height`: Height (in cm)
+* `weight`: Weight (in kg)
+* `ap_hi`: Systolic blood pressure
+* `ap_lo`: Diastolic blood pressure
+* `cholesterol`: Cholesterol, 1: Normal, 2: Above Normal, 3: Well Above Normal
+* `glue`: Glucose, 1: Normal, 2: Above Normal, 3: Well Above Normal
+* `smoke`: Whether patient smokes or not, 1: Do not smoke, 2: Smoke
+* `alco`: Alcohol intake, 1: Do not drink alcohol, 2: Drink alcohol
+* `active`: Physical activity, 1: Do not exercise, 2: Exercise
+* `df`: Presence or absence of cardiovascular disease, 1: Absence, 2: Presence
+
+
+```{r}
+xkablesummary(df[,2:13], title = "Summary of Cardio Vascular Disease Data")
+```
+# Categorical Variables EDA   
+# Continuous Variables EDA     
+# EDA on the joint effect of influencing factors     
+# Model Comparison      
+## Logistic Regression   
+```{r}
+#need correlation plot to select variables
+df_num <- df
+
+for(i in 2:13){
+  if (!(i %in% c(2, 4:7, 9))){
+    df_num[,i] = as.numeric(df_num[,i])
+  }
+}
+cor <- cor(subset(df_num, select = -c(id)), method = "spearman")
+loadPkg("corrplot")
+corrplot(cor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Cardio Vascular Disease Correlation", mar=c(0,0,1,0))
+```
+  The first model we are performing is logistic regression model. There are 13 variables, first we exclude `id` which is not related to the cardio vascular disease. Then to prevent the multicollinearity, we choose one between `ap_hi` and `ap_lo`. So, we start with a logistic model with 10 variables. We set alpha equal to 0.05, so we should exclude all the variable that have p-value larger than 0.05.   
+```{r}
+logistic_all <- glm(cardio ~ age + gender + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
+summary(logistic_all)
+```
+With p-value of 0.49, we delete `gender`.  
+```{r}
+logistic_1 <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
+summary(logistic_1)
+```
+```{r}
+coef1 <- exp(coef(logistic_1))
+xkabledply(as.table(coef1), title = "Exponential of coefficiant in logistic model")
+```
+
+AUC and ROC:   
+```{r}
+loadPkg("pROC")
+prob <- predict(logistic_1, type = "response")
+df$prob <- prob
+h <- roc(cardio ~ prob, data = df)
+auc(h)
+plot(h)
+```
