@@ -260,8 +260,10 @@ churnPredCross2 <- CrossTable(df.testLabel2, pred2, prop.chisq = FALSE)
 str(df_num)
 library(randomForest)
 fit_im <- randomForest(df_num$cardio ~., data = df_num)
+```
+```{r}
 importance(fit_im)
-varTmpPlot(fit_im)
+varImpPlot(fit_im)
 ```
 
 
