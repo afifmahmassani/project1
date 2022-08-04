@@ -269,34 +269,45 @@ Choose top 6 features to build the tree model: `ap_hi`, `age`, `weight`, `ap_lo`
 ```{r}
 loadPkg("rpart")
 loadPkg("caret")
-ConfusionMatrixResultDF <- data.frame(Depth = numeric(0), Accuracy  = numeric(0), Sensitivity = numeric(0), Specificity = numeric(0), 
+
+
+
+# create an empty dataframe to store the results from confusion matrices
+confusionMatrixResultDf = data.frame(Depth = numeric(0), Accuracy  = numeric(0), Sensitivity = numeric(0), Specificity = numeric(0), 
                                       Pos.Pred.Value = numeric(0), Neg.Pred.Value = numeric(0), Precision = numeric(0), Recall = numeric(0),
                                       F1 = numeric(0), Prevalence = numeric(0), Detection.Rate = numeric(0), Detection.Prevalence = numeric(0),
                                       Balanced.Accurary = numeric(0), row.names = NULL)
-df_num = df
-for(i in 1:12){
-  if (!(i %in% c(3,4,5,6,12))){
-    df_num[,i] = as.numeric(df_num[,i])
-  }
-}
-str(df_num)
-for (deep in 2:8) {
-  kfit <- rpart(cardio ~ ap_hi + age + weight + ap_lo + height + cholesterol, data = df_num, method = "class", control = list(maxdepth = deep))
-  
-  cm = confusionMatrix( predict(kfit, type = "class"), reference = df_num[, "cardio"])
-  
+
+for (deep in 2:6) {
+  kfit <- rpart(cardio ~ ap_hi + age + weight + ap_lo + height + cholesterol, data = df_num, method="class", control = list(maxdepth = deep) )
+  # 
+  cm = confusionMatrix( predict(kfit, type = "class"), reference = df_num[, "cardio"] ) # from caret library
+  # 
   cmaccu = cm$overall['Accuracy']
-  
-  cmt = data.frame(Depth = deep, Accuracy = cmaccu, row.names = NULL)
-  cmt = cbind( cmt, data.frame( t(cm$byClass)))
-  ConfusionMatrixResultDF = rbind(ConfusionMatrixResultDF, cmt)
+  # print( paste("Total Accuracy = ", cmaccu ) )
+  # 
+  cmt = data.frame(Depth=deep, Accuracy = cmaccu, row.names = NULL ) # initialize a row of the metrics 
+  cmt = cbind( cmt, data.frame( t(cm$byClass) ) ) # the dataframe of the transpose, with k valued added in front
+  confusionMatrixResultDf = rbind(confusionMatrixResultDf, cmt)
+  # print("Other metrics : ")
 }
+
 unloadPkg("caret")
 ```
 ```{r}
 xkabledply(ConfusionMatrixResultDF, title = "Cardio Classificantion Trees summary with varying MaxDepth")
 ```
-
+```{r}
+set.seed(1000)
+cardiofit <- rpart(cardio ~ ap_hi + age + weight + ap_lo + height + cholesterol, data = df_num, method = "class", control = list(maxdepth=6))
+printcp(cardiofit)
+plotcp(cardiofit)
+summary(cardiofit)
+```
+```{r}
+plot(cardiofit, uniform = TRUE, main = "Classification Tree for Cardio")
+text(cardiofit, use.n = TRUE, all = TRUE, cex = 0.8)
+```
 
 
 
