@@ -19,7 +19,7 @@ customerNum = customer
 # convert categorical variable as numeric 
 for(i in 2:21){
   # tenure, MonthlyCharges, TotalCharges
-  if (!(i %in% c(6, 19, 20))){
+  if (!(i %in% c(6, 19, 20, 21))){
     customerNum[,i] = as.numeric(customerNum[,i])
   }
 }
@@ -86,3 +86,28 @@ ggplot(knn_full_different_k,
   geom_point(size = 3) + 
   labs(title = "accuracy vs k")
 xkabledply((knn_full_different_k))
+
+loadPkg("rpart")
+loadPkg("caret")
+
+
+
+# create an empty dataframe to store the results from confusion matrices
+confusionMatrixResultDf = data.frame( Depth=numeric(0), Accuracy= numeric(0), Sensitivity=numeric(0), Specificity=numeric(0), Pos.Pred.Value=numeric(0), Neg.Pred.Value=numeric(0), Precision=numeric(0), Recall=numeric(0), F1=numeric(0), Prevalence=numeric(0), Detection.Rate=numeric(0), Detection.Prevalence=numeric(0), Balanced.Accuracy=numeric(0), row.names = NULL )
+
+for (deep in 2:8) {
+  kfit <- rpart(Churn ~ TotalCharges + MonthlyCharges + tenure + Contract +  OnlineSecurity + PaymentMethod, data=customerNum, method="class", control = list(maxdepth = deep) )
+  # 
+  cm = confusionMatrix( predict(kfit, type = "class"), reference = customerNum[, "Churn"] ) # from caret library
+  # 
+  cmaccu = cm$overall['Accuracy']
+  # print( paste("Total Accuracy = ", cmaccu ) )
+  # 
+  cmt = data.frame(Depth=deep, Accuracy = cmaccu, row.names = NULL ) # initialize a row of the metrics 
+  cmt = cbind( cmt, data.frame( t(cm$byClass) ) ) # the dataframe of the transpose, with k valued added in front
+  confusionMatrixResultDf = rbind(confusionMatrixResultDf, cmt)
+  # print("Other metrics : ")
+}
+
+unloadPkg("caret")
+xkabledply(confusionMatrixResultDf, title="Churn Classification Trees summary with varying MaxDepth")
