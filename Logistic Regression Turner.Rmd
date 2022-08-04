@@ -52,17 +52,17 @@ df <- na.omit(df)
 str(df)
 ``` 
 
-```{r}
+```{r, results='markup'}
 logistic_all <- glm(cardio ~ age + gender + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
 summary(logistic_all)
 ```
 
-```{r}
+```{r, results='markup'}
 logistic_1 <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
 summary(logistic_1)
 ```
 
-```{r}
+```{r, results='markup'}
 logistic_2 <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + smoke + alco + active, data = df, family = "binomial")
 summary(logistic_2)
 ```
