@@ -1,0 +1,178 @@
+---
+title: "Cardio Vascular Disease Project"
+author: "Team 1"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r init, include=F}
+library(ezids)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+```
+
+```{r}
+CVD <- data.frame(read.csv("cardio_train.csv", sep=";"))
+View(CVD)
+```
+
+
+## Chapter 1: Introudction to Cardiovascular Diseases (CVDs)
+
+# 1.1 Basic Information About Cardiovascular Diseases (CVDs)
+
+Cardiovascular Disease is a general name for numerous types of diseases including heart attack, stroke, and heart failure. In 2019 an estimated 17.9 million people died from Cardiovascular Diseases and 85% were due to heart attack and stroke.
+
+# 1.2 Reasons of Choosing Cardiovascular Disease.
+As living standards are improving over the past few decades, having a healthy lifestyle and avoiding serious illnesses have become people’s priorities and Cardiovascular diseases are the leading cause of death globally our group is interested in finding out some facts about Cardiovascular Disease such as what exactly Cardiovascular Diseases are. What are some factors that are correlate to Cardiovascular Diseases, among those factors what have the strongest correlation to Cardiovascular Diseases? And would a healthy lifestyle help to prevent people from having cardiovascular disease? Therefore, our group choose this dataset about Cardiovascular Diseases
+
+## Chapter 2: Summary of the Dataset
+
+# 2.1:About the Dataset
+The Cardiovascular Diseases dataset is extracted from Kaggle. It contains information from 70,000 records of patients that provided their age, height, weight, physical condition, and habits. Studying such data can help the public and health organizations identify potential factors that could lead to a higher chance of getting Cardiovascular Diseases, and develop appropriate strategies to reduce the number of patients.
+The dataset is cardio_train.csv. Before doing any analysis on this dataset, we did some research about what every single variable in the dataset represents, why they are included in this dataset, and what variables we will use in our model. With all those information government agents and the public will know how to adjust their habits or lifestyle to prevent getting Cardiovascular Diseases. Therefore, it is crucial to figure out current problems, and then publish the information.
+
+# 2.2: Variables
+```{r}
+str(CVD)
+```
+
+1.`id`: Respondents'id | id | int
+
+2.`Age`: Respondents' age | age | int (days)
+
+3.`Height`: Respondents' height | height | int (cm)
+
+4.`Weight`: Respondents' weight | weight | num (kg)
+
+5.`Gender`: Respondents'gender | gender  | int (1:Feale|2:Male)
+
+6.`Systolic blood pressure`: Respondents' systolic blood pressure | ap_hi | int 
+
+7.`Diastolic blood pressure`: Respondents' diastolic blood pressure | ap_lo | int
+
+8.`Cholesterol`: Respondents' cholesterol level | cholesterol | int (1: normal, 2: above normal, 3: well above normal)
+
+9.`Glucose`: Respondents' glucose level | gluc | int (1: normal, 2: above normal, 3: well above normal)
+
+10.`Smoking`: Whether respondent smokes or not | smoke | int (0:Do not smoke, 1:Smoke) 
+
+11.`Alcohol intake`: Whether respondent drink or not | alco | int (0:Do not drink, 1: Drink)
+
+12.`Physical activity`: Respondents' do not physical activity regularly | active | int (0:Workout regularly, 1: No workout regularly)
+
+13.`Presence or absence of cardiovascular disease`: Respondent present cardiovascular disease | cardio | int (0:No CVD currently present, 1:CVD currently present)
+
+## Chapter 3: Descriptive Statistics
+
+# 3.1 Categorical Variables EDA
+# 3.1.1 Are there any common in CVD patients?
+We choose several factors from the dataset and check if there are some factors that have a significant difference between CVD presented and CVD not presented.All the tables below will use percentage. 
+
+We start with smoke history and whether CVD are currently presented or not.
+Smoke
+```{r,results='markup'}
+library(dplyr)
+smoke_con<-aggregate(CVD$cardio, by=list(CVD$smoke,CVD$cardio), FUN=length)
+smoke_con<-rename(smoke_con,Smoke = Group.1,CVD_presence = Group.2,CVD = x)
+smoke_con$Smoke[smoke_con$Smoke=="0"] <- 'Not smoke'
+smoke_con$Smoke[smoke_con$Smoke=="1"] <- 'Smoke'
+smoke_con$CVD_presence[smoke_con$CVD_presence=="0"] <- 'Not Present'
+smoke_con$CVD_presence[smoke_con$CVD_presence=="1"] <- 'Present'
+xkabledply(smoke_con)
+```
+
+alcohol intake 
+```{r,results='markup'}
+alco_con<-aggregate(CVD$cardio,by=list(CVD$alco,CVD$cardio), FUN=length)
+alco_con<-rename(alco_con,alco = Group.1,CVD_presence = Group.2,CVD = x)
+alco_con$alco[alco_con$alco=="0"] <- 'Not drink'
+alco_con$alco[alco_con$alco=="1"] <- 'Drink'
+alco_con$CVD_presence[alco_con$CVD_presence=="0"] <- 'Not Present'
+alco_con$CVD_presence[alco_con$CVD_presence=="1"] <- 'Present'
+xkabledply(alco_con)
+```
+
+Physical Activity
+```{r,results='markup'}
+active_con<-aggregate(CVD$cardio, by=list(CVD$active,CVD$cardio), FUN=length)
+active_con<-rename(active_con,active = Group.1,CVD_presence = Group.2,CVD = x)
+active_con$active[active_con$active=="0"] <- 'Physical Activity'
+active_con$active[active_con$active=="1"] <- 'Not Physical Activity'
+active_con$CVD_presence[active_con$CVD_presence=="0"] <- 'Not Present'
+active_con$CVD_presence[active_con$CVD_presence=="1"] <- 'Present'
+xkabledply(active_con)
+```
+
+# 3.1.2 Plot comparing different factors
+
+Plot of Smoke & CVD
+```{r,results='markup'}
+smoke_pic <- data.frame(table(CVD$smoke,CVD$cardio))
+names(smoke_pic) <- c("Smoke","Cardio","Count")
+ggplot(data=smoke_pic, aes(x=Smoke, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Not smoke", "1" = "Smoke"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of Smoke history and present of CVDs") + ylab("Percentage")
+```
+
+Plot of alcohol intake & CVD
+```{r,results='markup'}
+alco_pic <- data.frame(table(CVD$alco,CVD$cardio))
+names(alco_pic) <- c("alco","Cardio","Count")
+ggplot(data=alco_pic, aes(x=alco, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Not Drink", "1" = "Drink"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of alcohol intake and present of CVDs") + ylab("Percentage")
+```
+
+Plot of physical activity & CVD
+```{r,results='markup'}
+active_pic <- data.frame(table(CVD$active,CVD$cardio))
+names(active_pic) <- c("active","Cardio","Count")
+ggplot(data=active_pic, aes(x=active, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Workout regularly", "1" = "Not workout regularly"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of workout and present of CVDs") + ylab("Percentage")
+```
+
+# 3.1.3 Chi-Square Tests
+
+Since there are 
+
+Chi-square test for Smoke & CVD presence
+```{r,results='hide'}
+smoke_cvd = table(CVD$cardio, CVD$smoke)
+```
+
+```{r,results='markup'}
+sctest<- chisq.test(smoke_cvd)
+sctest
+```
+
+Chi-square test for Alcohol intake & CVD presence
+```{r,results='hide'}
+al_cvd = table(CVD$cardio, CVD$alco)
+```
+```{r,results='markup'}
+alctest<- chisq.test(al_cvd)
+alctest
+```
+
+Chi-square test for Physical Activity & CVD presence
+```{r,results='hide'}
+act_cvd = table(CVD$cardio, CVD$active)
+```
+```{r,results='markup'}
+act_test<- chisq.test(act_cvd)
+act_test
+```
+
+
+# 3.2 Continuous Variables EDA
+
