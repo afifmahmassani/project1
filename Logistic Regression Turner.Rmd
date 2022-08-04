@@ -1,0 +1,100 @@
+---
+title: "Cardio Vascular Disease Project"
+author: "Team 1: Afif Mahmassani, Turner Luo, Lijia Ren, Steven Tian"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r init, include=F}
+library(ezids)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+```
+
+```{r}
+cardio_vascular_disease <- read.csv2("cardio_train.csv", header = TRUE)
+str(cardio_vascular_disease)
+```
+
+```{r}
+df <- cardio_vascular_disease
+df$id <- NULL
+df$gender <- factor(cardio_vascular_disease$gender)
+df$smoke <- factor(cardio_vascular_disease$smoke)
+df$alco <- factor(cardio_vascular_disease$alco)
+df$active <- factor(cardio_vascular_disease$active)
+df$cardio <- factor(cardio_vascular_disease$cardio)
+df$cholesterol <- factor(cardio_vascular_disease$cholesterol)
+df$gluc <- factor(cardio_vascular_disease$gluc)
+df$weight <- as.integer(cardio_vascular_disease$weight)
+
+levels(df$cardio) <- c("No", "Yes")
+levels(df$gender) <- c("Female", "Male")
+levels(df$cholesterol) <- c("Normal", "Above Normal", "Well Above Normal")
+levels(df$gluc) <- c("Normal", "Above Normal", "Well Above Normal")
+levels(df$smoke) <- c("No", "Yes")
+levels(df$alco) <- c("No", "Yes")
+levels(df$active) <- c("No", "Yes")
+df <- na.omit(df)
+
+str(df)
+``` 
+
+```{r}
+logistic_all <- glm(cardio ~ age + gender + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
+summary(logistic_all)
+```
+
+```{r}
+logistic_1 <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
+summary(logistic_1)
+```
+
+```{r}
+logistic_2 <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + smoke + alco + active, data = df, family = "binomial")
+summary(logistic_2)
+```
+
+```{r, results='markup'}
+loadPkg("regclass")
+confusion_matrix(logistic_2)
+xkabledply( confusion_matrix(logistic_2), title = "Confusion matrix from Logit Model" )
+cfmatrix1 = confusion_matrix(logistic_2)
+accuracy1 <- (cfmatrix1[1,1]+cfmatrix1[2,2])/cfmatrix1[3,3]
+precision1 <- cfmatrix1[2,2]/(cfmatrix1[2,2]+cfmatrix1[1,2])
+recall1 <- cfmatrix1[2,2]/(cfmatrix1[2,2]+cfmatrix1[2,1])
+specificity1 <- cfmatrix1[1,1]/(cfmatrix1[1,1]+cfmatrix1[1,2])
+F1_score1 <- 2*(precision1)*(recall1)/(precision1 + recall1)
+accuracy1
+precision1
+recall1
+specificity1
+F1_score1
+```
+
+```{r, results='markup'}
+loadPkg("pROC")
+prob <- predict(logistic_2, type = "response")
+df$prob <- prob
+h <- roc(cardio ~ prob, data = df)
+auc(h)
+plot(h)
+```
+
+```{r,results='markup'}
+loadPkg("pscl")
+Logitpr2 = pR2(logistic_2)
+Logitpr2
+```
