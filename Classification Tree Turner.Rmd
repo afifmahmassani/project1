@@ -1,0 +1,53 @@
+---
+title: "Cardio Vascular Disease Project"
+author: "Team 1: Afif Mahmassani, Turner Luo, Lijia Ren, Steven Tian"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r init, include=F}
+library(ezids)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+```
+
+```{r}
+cardio_vascular_disease <- read.csv2("cardio_train.csv", header = TRUE)
+str(cardio_vascular_disease)
+```
+
+```{r}
+df <- cardio_vascular_disease
+df$id <- NULL
+df$gender <- factor(cardio_vascular_disease$gender)
+df$smoke <- factor(cardio_vascular_disease$smoke)
+df$alco <- factor(cardio_vascular_disease$alco)
+df$active <- factor(cardio_vascular_disease$active)
+df$cardio <- factor(cardio_vascular_disease$cardio)
+df$cholesterol <- factor(cardio_vascular_disease$cholesterol)
+df$gluc <- factor(cardio_vascular_disease$gluc)
+df$weight <- as.integer(cardio_vascular_disease$weight)
+
+levels(df$cardio) <- c("No", "Yes")
+levels(df$gender) <- c("Female", "Male")
+levels(df$cholesterol) <- c("Normal", "Above Normal", "Well Above Normal")
+levels(df$gluc) <- c("Normal", "Above Normal", "Well Above Normal")
+levels(df$smoke) <- c("No", "Yes")
+levels(df$alco) <- c("No", "Yes")
+levels(df$active) <- c("No", "Yes")
+df <- na.omit(df)
+
+str(df)
+``` 
