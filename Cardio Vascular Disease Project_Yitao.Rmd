@@ -306,7 +306,7 @@ summary(cardiofit)
 ```
 ```{r}
 plot(cardiofit, uniform = TRUE, main = "Classification Tree for Cardio")
-text(cardiofit, use.n = TRUE, all = TRUE, cex = 0.8)
+text(cardiofit, use.n = TRUE, all = TRUE, cex = 1)
 ```
 
 
