@@ -226,7 +226,7 @@ df.trainLabel2 <- scale2[df_sample2==1, 10]
 df.testLabel2 <- scale2[df_sample2==2, 10]
 ```
 ### Select K    
-```{r}
+```{r, results='markup'}
 knn_different_k2 = sapply(seq(1, 21, by = 2),  
                          function(x) chooseK(x, 
                                              train_set = df_train2,
@@ -251,8 +251,17 @@ knn.roc.prob <- attr(knn(train = df_train2, test = df_test2, cl = df.trainLabel2
 pred2
 ```
 ### Evalution   
-```{r}
-
+```{r, results='markup'}
+churnPredCross2 <- CrossTable(df.testLabel2, pred2, prop.chisq = FALSE)
+```
+### Comparison  
+## Classifiction Tree    
+```{r, results='markup'}
+str(df_num)
+library(randomForest)
+fit_im <- randomForest(df_num$cardio ~., data = df_num)
+importance(fit_im)
+varTmpPlot(fit_im)
 ```
 
 
