@@ -92,9 +92,37 @@ h <- roc(cardio ~ prob, data = df)
 auc(h)
 plot(h)
 ```
-
-```{r,results='markup'}
-loadPkg("pscl")
-Logitpr2 = pR2(logistic_2)
-Logitpr2
+Not a good fit.   
+#Feature Selection   
+```{r}
+loadPkg("leaps")
+reg.leaps <- regsubsets(cardio ~ ., data = df, nbest = 1, method = "exhaustive")
+plot(reg.leaps, scale = "adjr2", main = "Adjusted R^2")
 ```
+```{r}
+plot(reg.leaps, scale = "bic", main = "BIC")
+```
+```{r}
+plot(reg.leaps, scale = "Cp", main = "Cp")
+```
+Close results.   
+# Bestglm   
+```{r}
+loadPkg("bestglm")
+res.bestglm <- bestglm(Xy = df, family = binomial, IC = "AIC", method = "exhaustive")
+summary(res.bestglm)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
