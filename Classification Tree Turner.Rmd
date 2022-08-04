@@ -61,8 +61,6 @@ for(i in 1:12){
 }
 df_num$cardio <- df$cardio
 str(df_num)
-
-
 ```
 
 ```{r}
@@ -110,6 +108,27 @@ plot(cardiofit, uniform = TRUE, main = "Classification Tree for Cardio")
 text(cardiofit, use.n = TRUE, all = TRUE, cex = 1)
 ```
 ```{r}
+loadPkg("caret")
+cm = confusionMatrix( predict (cardiofit, type = "class"), reference = df_num[, "cardio"])
+print('Overall: ')
+cm$overall
+```
+```{r}
+print('Class')
+cm$byClass
+```
+```{r}
+xkabledply(cm$table, "confusion matrix")
+```
+```{r}
+loadPkg("rpart.plot")
+loadPkg("rattle")
+rpart.plot(cardiofit)
+fancyRpartPlot(cardiofit)
+```
+#ROC Curve   
+
+```{r}
 library(rpart)
 rp <- rpart(cardio ~., data = df_num)
 library(ROCR)
@@ -119,3 +138,4 @@ plot(performance(pred, "tpr", "fpr"), main = "ROC Cardio")
 auc = performance(pred, 'auc')
 slot(auc, 'y.values')
 ```
+
