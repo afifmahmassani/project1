@@ -265,7 +265,9 @@ fit_im <- randomForest(df_num$cardio ~., data = df_num)
 importance(fit_im)
 varImpPlot(fit_im)
 ```
-Choose top 6 features to build the tree model: `ap_hi`, `age`, `weight`, `ap_lo`, `height`, `cholesterol`.    
+
+Choose top 6 features to build the tree model: `ap_lo`, `age`, `weight`, `height`, `cholesterol`, `gluc`.  
+Since correlation. 
 ```{r}
 loadPkg("rpart")
 loadPkg("caret")
