@@ -118,14 +118,19 @@ ggplot(knn_different_k,
 
 xkabledply((knn_different_k))
 ```
-
+`k=9` is a decent choice.
 ```{r, results='markup'}
-pred <- knn(train = df_train, test = df_test, cl=df.trainLabels, k=17)
+pred <- knn(train = df_train, test = df_test, cl=df.trainLabels, k=9)
 pred
 
 loadPkg("gmodels")
 churnPredCross <- CrossTable(df.testLabels, pred, prop.chisq = FALSE)
 ```
+accuracy = 0.6583     
+precision = 0.6733     
+recall = 0.6308     
+specificity = 0.6866      
+F1_score = 0.6514      
 
 ### KNN with selected variables    
 Remove `gender` and `gluc`.   
@@ -176,4 +181,19 @@ pred2
 
 ```{r, results='markup'}
 churnPredCross2 <- CrossTable(df.testLabel2, pred2, prop.chisq = FALSE)
+```
+
+accuracy = 0.6717
+precision = 0.6877
+recall = 0.6432
+specificity = 0.701
+F1_score = 0.6616
+
+#Comparison
+```{r, results='markup'}
+tab <- matrix(c(0.6583, 0.6733, 0.6308, 0.6866, 0.6514, 0.6717, 0.6877, 0.6432, 0.701, 0.6616, 0.722, 0.743, 0.677, 0.767, 0.708), ncol = 5, byrow = TRUE)
+colnames(tab) <- c("Accuracy", "Precision", "Recall", "Specificity", "F1 Score")
+rownames(tab) <- c("KNN with all variables", "KNN with selected variables", "Logistic with selected variables")
+tab <- as.table(tab)
+xkabledply(tab, "Models Comparison")
 ```
