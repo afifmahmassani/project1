@@ -74,6 +74,8 @@ df_train <- scale1[df_sample==1, 1:11]
 df_test <- scale1[df_sample==2, 1:11]
 df.trainLabels <- df[df_sample==1, 12]
 df.testLabels <- df[df_sample==2, 12]
+str(df_train)
+str(df_test)
 ```
 
 ```{r, echo=FALSE}
