@@ -192,7 +192,7 @@ age_kdeplot
 
 ```
 
-As we can see from kdeplot for age, people with higher age are more likely to have CVD. And from kdeplot for height  and weight ,  we can find that  people with CDV and without CDV have very similar distributions. From these 3 kde plots, which means,CVD may be positive correlated with age. Finally, weight may only make a little attribution to people presenting CVD.
+As we can see from kdeplot for age, people with higher age are more likely to have CVD. And from kdeplot for height  and weight ,  we can find that  people with CVD and without CVD have very similar distributions. From these 3 kde plots, which means,CVD may be positive correlated with age. Finally, weight may only make a little attribution to people presenting CVD.
 
 ## 4.2 Logistic regression
 
