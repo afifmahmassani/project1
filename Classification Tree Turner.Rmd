@@ -139,3 +139,11 @@ auc = performance(pred, 'auc')
 slot(auc, 'y.values')
 ```
 
+```{r}
+tab1 <- matrix(c(0.672, 0.688, 0.643, 0.701, 0.662, 0.722, 0.743, 0.677, 0.767, 0.708, 0.702, 0.677, 0.771, 0.632, 0.721), ncol = 5, byrow = TRUE)
+colnames(tab1) <- c("Accuracy", "Precision", "Recall", "Specificity", "F1 Score")
+rownames(tab1) <- c("KNN with selected variables", "Logistic with selected variables", "Classification Tree with selected variables")
+tab1 <- as.table(tab1)
+xkabledply(tab1, "Model Comparison")
+```
+
