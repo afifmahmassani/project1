@@ -1,0 +1,149 @@
+---
+title: "Cardio Vascular Disease Project"
+author: "Team 1: Afif Mahmassani, Turner Luo, Lijia Ren, Steven Tian"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r init, include=F}
+library(ezids)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+```
+
+```{r}
+cardio_vascular_disease <- read.csv2("cardio_train.csv", header = TRUE)
+str(cardio_vascular_disease)
+```
+
+```{r}
+df <- cardio_vascular_disease
+df$id <- NULL
+df$gender <- factor(cardio_vascular_disease$gender)
+df$smoke <- factor(cardio_vascular_disease$smoke)
+df$alco <- factor(cardio_vascular_disease$alco)
+df$active <- factor(cardio_vascular_disease$active)
+df$cardio <- factor(cardio_vascular_disease$cardio)
+df$cholesterol <- factor(cardio_vascular_disease$cholesterol)
+df$gluc <- factor(cardio_vascular_disease$gluc)
+df$weight <- as.integer(cardio_vascular_disease$weight)
+
+levels(df$cardio) <- c("No", "Yes")
+levels(df$gender) <- c("Female", "Male")
+levels(df$cholesterol) <- c("Normal", "Above Normal", "Well Above Normal")
+levels(df$gluc) <- c("Normal", "Above Normal", "Well Above Normal")
+levels(df$smoke) <- c("No", "Yes")
+levels(df$alco) <- c("No", "Yes")
+levels(df$active) <- c("No", "Yes")
+df <- na.omit(df)
+
+str(df)
+``` 
+
+```{r}
+df_num <- df
+for(i in 1:12){
+  if (!(i %in% c(1,3:6))){
+    df_num[,i] = as.numeric(df_num[,i])
+  }
+}
+df_num$cardio <- df$cardio
+str(df_num)
+```
+
+```{r}
+loadPkg("rpart")
+loadPkg("caret")
+
+
+
+# create an empty dataframe to store the results from confusion matrices
+confusionMatrixResultDf = data.frame(Depth = numeric(0), Accuracy  = numeric(0), Sensitivity = numeric(0), Specificity = numeric(0), 
+                                      Pos.Pred.Value = numeric(0), Neg.Pred.Value = numeric(0), Precision = numeric(0), Recall = numeric(0),
+                                      F1 = numeric(0), Prevalence = numeric(0), Detection.Rate = numeric(0), Detection.Prevalence = numeric(0),
+                                      Balanced.Accurary = numeric(0), row.names = NULL)
+
+for (deep in 2:15) {
+  kfit <- rpart(cardio ~ age + weight + ap_lo + height + cholesterol, data = df_num, method="class", control = list(maxdepth = deep) )
+  # 
+  cm = confusionMatrix( predict(kfit, type = "class"), reference = df_num[, "cardio"] ) # from caret library
+  # 
+  cmaccu = cm$overall['Accuracy']
+  # print( paste("Total Accuracy = ", cmaccu ) )
+  # 
+  cmt = data.frame(Depth=deep, Accuracy = cmaccu, row.names = NULL ) # initialize a row of the metrics 
+  cmt = cbind( cmt, data.frame( t(cm$byClass) ) ) # the dataframe of the transpose, with k valued added in front
+  confusionMatrixResultDf = rbind(confusionMatrixResultDf, cmt)
+  # print("Other metrics : ")
+}
+
+unloadPkg("caret")
+```
+```{r}
+xkabledply(confusionMatrixResultDf, title = "Cardio Classificantion Trees summary with varying MaxDepth")
+```
+
+```{r}
+set.seed(1000)
+cardiofit <- rpart(cardio ~ age + weight + ap_lo + height + cholesterol, data = df_num, method = "class", control = list(maxdepth=7))
+printcp(cardiofit)
+plotcp(cardiofit)
+summary(cardiofit)
+```
+
+```{r}
+plot(cardiofit, uniform = TRUE, main = "Classification Tree for Cardio")
+text(cardiofit, use.n = TRUE, all = TRUE, cex = 1)
+```
+```{r}
+loadPkg("caret")
+cm = confusionMatrix( predict (cardiofit, type = "class"), reference = df_num[, "cardio"])
+print('Overall: ')
+cm$overall
+```
+```{r}
+print('Class')
+cm$byClass
+```
+```{r}
+xkabledply(cm$table, "confusion matrix")
+```
+```{r}
+loadPkg("rpart.plot")
+loadPkg("rattle")
+rpart.plot(cardiofit)
+fancyRpartPlot(cardiofit)
+```
+#ROC Curve   
+
+```{r}
+library(rpart)
+rp <- rpart(cardio ~., data = df_num)
+library(ROCR)
+pred <- prediction(predict(cardiofit, type = "prob")[,2], df_num$cardio)
+tree.predict.prob <- predict(cardiofit, type = "prob")[,2]
+plot(performance(pred, "tpr", "fpr"), main = "ROC Cardio")
+auc = performance(pred, 'auc')
+slot(auc, 'y.values')
+```
+
+```{r}
+tab1 <- matrix(c(0.672, 0.688, 0.643, 0.701, 0.662, 0.722, 0.743, 0.677, 0.767, 0.708, 0.702, 0.677, 0.771, 0.632, 0.721), ncol = 5, byrow = TRUE)
+colnames(tab1) <- c("Accuracy", "Precision", "Recall", "Specificity", "F1 Score")
+rownames(tab1) <- c("KNN with selected variables", "Logistic with selected variables", "Classification Tree with selected variables")
+tab1 <- as.table(tab1)
+xkabledply(tab1, "Model Comparison")
+```
+
