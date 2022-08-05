@@ -120,19 +120,19 @@ ggplot(knn_different_k,
 
 xkabledply((knn_different_k))
 ```
-`k=9` is a decent choice.
+`k=17` is a decent choice.
 ```{r, results='markup'}
-pred <- knn(train = df_train, test = df_test, cl=df.trainLabels, k=9)
+pred <- knn(train = df_train, test = df_test, cl=df.trainLabels, k=17)
 pred
 
 loadPkg("gmodels")
 churnPredCross <- CrossTable(df.testLabels, pred, prop.chisq = FALSE)
 ```
-accuracy = 0.6583     
-precision = 0.6733     
-recall = 0.6308     
-specificity = 0.6866      
-F1_score = 0.6514      
+accuracy = 0.6648     
+precision = 0.6809    
+recall = 0.6348     
+specificity = 0.6954        
+F1_score = 0.657      
 
 ### KNN with selected variables    
 Remove `gender` and `gluc`.   
