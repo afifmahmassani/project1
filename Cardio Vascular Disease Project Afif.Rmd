@@ -21,7 +21,7 @@ View(CVD)
 ```
 
 
-## Chapter 1: Introudction to Cardiovascular Diseases (CVDs)
+## Chapter 1: Introduction to Cardiovascular Diseases (CVDs)
 
 # 1.1 Basic Information About Cardiovascular Diseases (CVDs)
 
@@ -175,7 +175,7 @@ After a brief overview of the dataset, it tells that there are 3 continuous vari
 
 KDE plot represents the data using a continuous probability density curve in one or more dimensions. We can easily observe the distribution of samples with kde plot
 
-```{r init, include=F}
+```{r, include=F}
 library(ezids)
 library(ggplot2)
 library(dplyr)
@@ -183,14 +183,14 @@ library(ggpubr)
 ```
 
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
 ```
 
 
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 
 CVD <- data.frame(read.csv("cardio_train.csv", sep=";"))
 View(CVD)
@@ -199,14 +199,14 @@ View(CVD)
 ```
 
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 
 str(CVD)
 
 ```
 
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 
 
 CVD$cardio <- factor(CVD$cardio)
@@ -219,13 +219,13 @@ str(CVD)
 
 
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 
 CVD_new<- data.frame(CVD)
 CVD_new
 ```
 
-```{r setup, include=FALSE}
+```{r, include=FALSE}
 
 
 levels(CVD_new$cardio) <- c("No CVD Present", "CVD Present") 
@@ -341,7 +341,7 @@ The AUC value is 0.668. As 0.668 is much less than 1, this model is not good eno
 
 Below is the summary of model 2.
 
-````{r, results="markup"}
+```{r, results="markup"}
 xkabledply(lm2, title="summary of model 2")
 ```
 
@@ -378,7 +378,7 @@ From the results of above variables, we could find that some of the above variab
 
 As most of variables are factors, we check their Spearman correlations.
 
-```{r init, include=F}
+```{r, include=F}
 show(CVD_new)
 ```
 
@@ -420,7 +420,7 @@ Larger circle means higher correlation. We can see that CVD has negative correla
 ## 5.2 Will Age influence the CVD rate with other variables?
 
 
-```{r init, include=F}
+```{r, include=F}
 CVD_new$gluc<- factor(CVD_new$gluc)
 CVD_new$gender<- factor(CVD_new$gender)
 CVD_new$smoke<- factor(CVD_new$smoke)
@@ -430,12 +430,12 @@ str(CVD_new)
 
 ```
 
-```{r init, include=F}
+```{r, include=F}
 CVD_factor<- data.frame(CVD_new)
 CVD_factor
 ```
 
-```{r init, include=F}
+```{r, include=F}
 
 library(patchwork)
 ```
@@ -534,19 +534,19 @@ First, for Active, the sample groups of  active("1") have little higher CVD rate
 
 Second, for Alco, the sample groups of no alco ("0") have little higher CVD rates.
 
-#Models comparison: Logistic Regression
+# Models Comparison: Logistic Regression
 
 ```{r}
-df <- cardio_vascular_disease
+df <- CVD
 df$id <- NULL
-df$gender <- factor(cardio_vascular_disease$gender)
-df$smoke <- factor(cardio_vascular_disease$smoke)
-df$alco <- factor(cardio_vascular_disease$alco)
-df$active <- factor(cardio_vascular_disease$active)
-df$cardio <- factor(cardio_vascular_disease$cardio)
-df$cholesterol <- factor(cardio_vascular_disease$cholesterol)
-df$gluc <- factor(cardio_vascular_disease$gluc)
-df$weight <- as.integer(cardio_vascular_disease$weight)
+df$gender <- factor(CVD$gender)
+df$smoke <- factor(CVD$smoke)
+df$alco <- factor(CVD$alco)
+df$active <- factor(CVD$active)
+df$cardio <- factor(CVD$cardio)
+df$cholesterol <- factor(CVD$cholesterol)
+df$gluc <- factor(CVD$gluc)
+df$weight <- as.integer(CVD$weight)
 
 levels(df$cardio) <- c("No", "Yes")
 levels(df$gender) <- c("Female", "Male")
@@ -608,7 +608,8 @@ auc(h)
 plot(h)
 ```
 Not a good fit.   
-#Feature Selection   
+
+# Feature Selection   
 ```{r}
 loadPkg("leaps")
 reg.leaps <- regsubsets(cardio ~ ., data = df, nbest = 1, method = "exhaustive")
@@ -625,16 +626,16 @@ Close results.
 # Models Comparison: KNN
 
 ```{r}
-df <- cardio_vascular_disease
+df <- CVD
 df$id <- NULL
-df$gender <- factor(cardio_vascular_disease$gender)
-df$smoke <- factor(cardio_vascular_disease$smoke)
-df$alco <- factor(cardio_vascular_disease$alco)
-df$active <- factor(cardio_vascular_disease$active)
-df$cardio <- factor(cardio_vascular_disease$cardio)
-df$cholesterol <- factor(cardio_vascular_disease$cholesterol)
-df$gluc <- factor(cardio_vascular_disease$gluc)
-df$weight <- as.integer(cardio_vascular_disease$weight)
+df$gender <- factor(CVD$gender)
+df$smoke <- factor(CVD$smoke)
+df$alco <- factor(CVD$alco)
+df$active <- factor(CVD$active)
+df$cardio <- factor(CVD$cardio)
+df$cholesterol <- factor(CVD$cholesterol)
+df$gluc <- factor(CVD$gluc)
+df$weight <- as.integer(CVD$weight)
 
 levels(df$cardio) <- c("No", "Yes")
 levels(df$gender) <- c("Female", "Male")
@@ -788,19 +789,19 @@ xkabledply(tab, "Models Comparison")
 ```
 
 
-# Models comparison: Classification Tree
+# Models Comparison: Classification Tree
 
 ```{r}
-df <- cardio_vascular_disease
+df <- CVD
 df$id <- NULL
-df$gender <- factor(cardio_vascular_disease$gender)
-df$smoke <- factor(cardio_vascular_disease$smoke)
-df$alco <- factor(cardio_vascular_disease$alco)
-df$active <- factor(cardio_vascular_disease$active)
-df$cardio <- factor(cardio_vascular_disease$cardio)
-df$cholesterol <- factor(cardio_vascular_disease$cholesterol)
-df$gluc <- factor(cardio_vascular_disease$gluc)
-df$weight <- as.integer(cardio_vascular_disease$weight)
+df$gender <- factor(CVD$gender)
+df$smoke <- factor(CVD$smoke)
+df$alco <- factor(CVD$alco)
+df$active <- factor(CVD$active)
+df$cardio <- factor(CVD$cardio)
+df$cholesterol <- factor(CVD$cholesterol)
+df$gluc <- factor(CVD$gluc)
+df$weight <- as.integer(CVD$weight)
 
 levels(df$cardio) <- c("No", "Yes")
 levels(df$gender) <- c("Female", "Male")
