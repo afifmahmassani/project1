@@ -118,14 +118,6 @@ CVD_new<- data.frame(CVD)
 CVD_new
 ```
 
-```{r setup, include=FALSE}
-
-
-levels(CVD_new$cardio) <- c("No CVD Present", "CVD Present") 
-str(CVD_new)
-
-```
-
 
 ```{r setup, include=FALSE}
 
@@ -135,6 +127,17 @@ CVD_new$cardio[CVD_new$cardio=="0"] <- 'No CVD Present'
 CVD_new$cardio[CVD_new$cardio=="1"] <- 'CVD Present'
 CVD_new
 ```
+
+```{r setup, include=FALSE}
+
+
+levels(CVD_new$cardio) <- c("No CVD Present", "CVD Present") 
+str(CVD_new)
+
+```
+
+
+
 
 
 
