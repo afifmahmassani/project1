@@ -26,6 +26,11 @@ knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
 ```
 
+```{r}
+CVD <- data.frame(read.csv("cardio_train.csv", sep=";"))
+View(CVD)
+```
+
 
 
 ## Chapter 1: Introudction to Cardiovascular Diseases (CVDs)
@@ -348,7 +353,7 @@ As we can see from kdeplot for age, people with higher age are more likely to ha
 The logit model is often used for classification and predictive analytics. Logistic regression estimates the probability of an event occurring, such as voted or didn’t vote, based on a given dataset of independent variables. Since the outcome is a probability, the dependent variable is bounded between 0 and 1(binary outcome). In this case, "cardio"  is the binary outcome; as s result, we choose logistic regression to predict.
 
 
-```{r, results="markup"}
+```{r}
 
 
 lm1 <- glm(cardio~age, family = binomial(link = "logit"), data = CVD)
