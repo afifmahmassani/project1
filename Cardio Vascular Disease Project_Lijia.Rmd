@@ -1,0 +1,432 @@
+---
+title: "Cardio Vascular Disease Project"
+author: "Team 1"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r init, include=F}
+library(ezids)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+```
+## Chapter 1: Introudction to Cardiovascular Diseases (CVDs)
+
+<<<<<<< Updated upstream
+## Summary of the dataset
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+=======
+# 1.1 Basic Information About Cardiovascular Diseases (CVDs)
+
+Cardiovascular Disease is a general name for numerous types of diseases including heart attack, stroke, and heart failure. In 2019 an estimated 17.9 million people died from Cardiovascular Diseases and 85% were due to heart attack and stroke.
+
+# 1.2 Reasons of Choosing Cardiovascular Disease.
+As living standards are improving over the past few decades, having a healthy lifestyle and avoiding serious illnesses have become people’s priorities and Cardiovascular diseases are the leading cause of death globally our group is interested in finding out some facts about Cardiovascular Disease such as what exactly Cardiovascular Diseases are. What are some factors that are correlate to Cardiovascular Diseases, among those factors what have the strongest correlation to Cardiovascular Diseases? And would a healthy lifestyle help to prevent people from having cardiovascular disease? Therefore, our group choose this dataset about Cardiovascular Diseases
+
+## 
+
+
+ 
+>>>>>>> Stashed changes
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+4.
+# Chapter 4: Continuous Variables EDA to Cardiovascular Diseases (CVDs)
+
+After a brief overview of the dataset, it tells that there are 3 continuous variables, age, height and weight.
+
+## 4.1 KDE plot of continuous variables
+
+
+
+KDE plot represents the data using a continuous probability density curve in one or more dimensions. We can easily observe the distribution of samples with kde plot
+
+```{r init, include=F}
+library(ezids)
+library(ggplot2)
+library(dplyr)
+library(ggpubr)
+```
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = F, results = "hide", message = F)
+options(scientific=T, digits = 3) 
+```
+
+
+
+```{r setup, include=FALSE}
+
+CVD <- data.frame(read.csv("cardio_train.csv", sep=";"))
+View(CVD)
+
+
+```
+
+
+```{r setup, include=FALSE}
+
+str(CVD)
+
+```
+
+
+```{r setup, include=FALSE}
+
+
+CVD$cardio <- factor(CVD$cardio)
+str(CVD)
+
+```
+
+
+
+
+
+
+```{r setup, include=FALSE}
+
+CVD_new<- data.frame(CVD)
+CVD_new
+```
+
+```{r setup, include=FALSE}
+
+
+levels(CVD_new$cardio) <- c("No CVD Present", "CVD Present") 
+str(CVD_new)
+
+```
+
+
+```{r setup, include=FALSE}
+
+
+
+CVD_new$cardio[CVD_new$cardio=="0"] <- 'No CVD Present'
+CVD_new$cardio[CVD_new$cardio=="1"] <- 'CVD Present'
+CVD_new
+```
+
+
+
+
+
+
+
+```{r, results="markup"}
+cols<-c("No CVD Present"="green","CVD Present"="blue")
+
+```
+
+
+
+
+
+
+
+```{r, results="markup"}
+age_kdeplot <- ggplot(data = CVD_new, aes(x = age, color =cardio)) + 
+            geom_density(aes(fill = cardio), alpha = 0.8) + 
+             scale_fill_manual(values =cols) +
+              labs(title="KDEplot for age") +
+               labs(x="age", y="density") +
+                theme(legend.position="top")
+age_kdeplot
+
+
+```
+
+
+```{r, results="markup"}
+age_kdeplot <- ggplot(data = CVD_new, aes(x = height, color = cardio)) + 
+            geom_density(aes(fill = cardio), alpha = 0.8) + 
+             scale_fill_manual(values =cols) +
+              labs(title="KDEplot for height") +
+               labs(x="height", y="density") +
+                theme(legend.position="top")
+age_kdeplot
+
+
+```
+
+
+
+```{r, results="markup"}
+age_kdeplot <- ggplot(data = CVD_new, aes(x = weight, color = cardio)) + 
+            geom_density(aes(fill = cardio), alpha = 0.8) + 
+             scale_fill_manual(values= cols) +
+              labs(title="KDEplot for weight") +
+               labs(x="weight", y="density") +
+                theme(legend.position="top")
+age_kdeplot
+
+
+```
+
+As we can see from kdeplot for age, people with higher age are more likely to have CVD. And from kdeplot for height  and weight ,  we can find that  people with CVD and without CVD have very similar distributions. From these 3 kde plots, which means,CVD may be positive correlated with age. Finally, weight may only make a little attribution to people presenting CVD.
+
+## 4.2 Logistic regression
+
+The logit model is often used for classification and predictive analytics. Logistic regression estimates the probability of an event occurring, such as voted or didn’t vote, based on a given dataset of independent variables. Since the outcome is a probability, the dependent variable is bounded between 0 and 1(binary outcome). In this case, "cardio"  is the binary outcome; as s result, we choose logistic regression to predict.
+
+
+```{r, results="markup"}
+
+
+lm1 <- glm(cardio~age, family = binomial(link = "logit"), data = CVD)
+lm2 <- glm(cardio~age + weight, family = binomial(link = "logit"), data = CVD)
+lm3 <- glm(cardio~age+ height + weight, family = binomial(link = "logit"), data = CVD)
+anovat <- anova(lm1,lm2,lm3, test="LRT")
+anovat
+
+```
+
+As it is shown above, model 2 and 3 is better than model 1 . In addition, model 2 and 3 is at 100% significant level.
+
+
+
+## 4.3 AUC and ROC Curve
+
+We can use AUC and ROC to measure model 2 and model 3. AUC (Area Under The Curve) - ROC (Receiver Operating Characteristics) curve is a performance measurement for the classification problems at various threshold settings. ROC is a probability curve and AUC represents the degree or measure of separability. It tells how much the model is capable of distinguishing between classes. Higher the AUC, the better the model is at predicting 0 classes as 0 and 1 classes as 1. For summarize, the Higher the AUC, the better the model is.
+
+For model 2:
+
+
+```{r, results="markup"}
+prob <- predict(lm2,CVD, type = c("response"))
+CVD$prob <- prob
+library(pROC)
+g<- roc(cardio~prob, data = CVD)
+plot(g, main = "ROC curve of model 2")
+auc(CVD$cardio, prob)
+```
+The AUC value is 0.668. As 0.668 is much less than 1, this model is not good enough.
+
+
+Below is the summary of model 2.
+
+````{r, results="markup"}
+xkabledply(lm2, title="summary of model 2")
+```
+
+For model 3:
+
+
+
+```{r, results="markup"}
+prob1 <- predict(lm3,CVD, type = c("response"))
+CVD$prob1 <- prob1
+library(pROC)
+g<- roc(cardio~prob1, data = CVD)
+plot(g, main = "ROC curve of model 3")
+auc(CVD$cardio, prob1)
+```
+The AUC value is 0.671. As 0.671 is much less than 1 and 0.671 is more than 0.668, this model is not good enough but is better than model 2.
+
+
+Below is the summary of model 3.
+
+```{r, results="markup"}
+xkabledply(lm3, title="summary of model 3")
+```
+
+In the 3 continuous variables, `cardio` has positive correlation with `age` and `weight` ; it also has negative correlation with`height` . It means when a person with  higher `weight` and shorter `height`, he has more probabilities to have Cardio Vascular Disease. And `age` is not significant influence factor to people `cardio` rates in 3 continuous variables.
+
+
+# 5 Chapter 5: EDA on the joint effect of influencing factors
+
+
+From the results of above variables, we could find that some of the above variables have a significant effect on CVD. Next, we choose to graph the groups of variables with relatively large correlation coefficients one by one to explore how they affect the Cardio Vascular Disease.
+
+## 5.1 Simple correlations
+
+As most of variables are factors, we check their Spearman correlations.
+
+```{r init, include=F}
+show(CVD_new)
+```
+
+
+
+
+```{r, results="markup"}
+
+CVDNum = CVD
+
+str(CVDNum)
+```
+
+```{r, results="markup"}
+
+# convert categorical variable as numeric for spearman method
+for(i in 1:13){
+  # age, height, weight
+  if (!(i %in% c(2, 4, 5))){
+    CVDNum[,i] = as.numeric(CVDNum[,i])
+              }
+}
+str(CVDNum)
+
+```
+
+```{r, results="markup"}
+
+# corrplot with spearman method for categorical variables
+CVDcor <- cor(subset(CVDNum, select=-c(id, prob)), method="spearman")
+#CVDcor
+loadPkg("corrplot")
+#corrplot.mixed(CVDcor, tl.pos = "lt", number.cex = .5, tl.cex=0.8)
+corrplot(CVDcor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Spearman Correlation for CVD", mar=c(0,0,1,0))
+
+```
+Larger circle means higher correlation. We can see that CVD has negative correlation with cholesterol and height, which means that person who has shorter height or has high cholesterol is less likely to have Cardio Vascular Disease. Person who smoke and has high level cholesterol is also more likely to have CVD. So it makes sense that cholesterol  and smoke have positive correlation, which means most person who smoke also have high level cholesterol .
+
+## 5.2 Will Age influence the CVD rate with other variables?
+
+
+```{r init, include=F}
+CVD_new$gluc<- factor(CVD_new$gluc)
+CVD_new$gender<- factor(CVD_new$gender)
+CVD_new$smoke<- factor(CVD_new$smoke)
+CVD_new$alco<- factor(CVD_new$alco)
+CVD_new$active <- factor(CVD_new$active)
+str(CVD_new)
+
+```
+
+```{r init, include=F}
+CVD_factor<- data.frame(CVD_new)
+CVD_factor
+```
+
+```{r init, include=F}
+
+library(patchwork)
+```
+
+```{r, results="markup"}
+
+
+a1 <- ggplot(CVD_factor,aes(x = smoke , y = age , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Smoke") + ylab("Age")
+
+
+a2 <- ggplot(CVD_factor,aes(x = alco , y = age , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Alco") + ylab("Age")
+
+
+a3 <- ggplot(CVD_factor, aes(x=height, y=age, color= cardio)) +
+  geom_point(size=.5,alpha=0.4)
+
+
+```
+
+```{r, results="markup"}
+
+
+a3/ (a1+a2) + plot_annotation(title = 'Age Plot')
+```
+First, Age and height show no correlation.
+
+Second, for Smoke, the sample groups of smoke("1") and order age have higher CVD rates .
+
+Finally, for cholesterol, people are also prone to CVD when drink alco("1") and order age.
+
+## 5.3 Will Height influence the CVD rate with other variables?
+
+
+```{r, results="markup"}
+
+
+h1 <- ggplot(CVD_factor,aes(x = active , y = height , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Active") + ylab("Height")
+
+
+
+h2 <- ggplot(CVD_factor, aes(x=weight, y=height, color= cardio)) +
+  geom_point(size=0.5,alpha=0.4)
+
+
+```
+
+
+
+```{r, results="markup"}
+
+
+h1/ h2 + plot_annotation(title = 'Height Plot')
+```
+
+First, for Active, the sample groups of active("1") have little higher CVD rates.
+
+Second, weight and height show a little positive correlation .
+
+
+
+## 5.4 Will Weight influence the CVD rate with other variables?
+
+
+```{r, results="markup"}
+
+
+w1 <- ggplot(CVD_factor,aes(x = active , y = weight , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Active") + ylab("Weight")
+
+
+w2 <- ggplot(CVD_factor,aes(x = alco , y = weight , fill = cardio)) +
+  geom_violin(alpha = 0.5, aes(linetype=NA)) +
+  xlab("Alco") + ylab("Weight")
+
+
+
+
+```
+
+
+
+```{r, results="markup"}
+
+
+w1/ w2 + plot_annotation(title = 'Weight Plot')
+```
+
+First, for Active, the sample groups of  active("1") have little higher CVD rates 
+
+Second, for Alco, the sample groups of no alco ("0") have little higher CVD rates.
+
+
+
+
