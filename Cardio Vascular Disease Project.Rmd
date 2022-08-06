@@ -27,7 +27,7 @@ options(scientific=T, digits = 3)
 ```
 
 ```{r}
-CVD <- data.frame(read.csv("cardio_train.csv", sep=";"))
+CVD <- data.frame(read.csv("cardio_train.csv"))
 View(CVD)
 ```
 
