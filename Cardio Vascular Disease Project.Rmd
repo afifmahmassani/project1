@@ -27,7 +27,7 @@ options(scientific=T, digits = 3)
 ```
 
 ```{r}
-CVD <- data.frame(read.csv("cardio_train.csv"))
+CVD <- data.frame(read.csv("cardio_train.csv", sep=";"))
 View(CVD)
 ```
 
@@ -212,7 +212,7 @@ act_test
 
 Since the p-value is 2e-16 < 0.05, we reject the null hypothesis, therefore physical activity has a significant impact on whether cardio-vascular diseases are presented. 
 
-
+# 3.2 Continuous Variables EDA
 # Chapter 4: Continuous Variables EDA to Cardiovascular Diseases (CVDs)
 
 After a brief overview of the dataset, it tells that there are 3 continuous variables, age, height and weight.
@@ -409,7 +409,7 @@ xkabledply(lm3, title="summary of model 3")
 In the 3 continuous variables, `cardio` has positive correlation with `age` and `weight` ; it also has negative correlation with`height` . It means when a person with  higher `weight` and shorter `height`, he has more probabilities to have Cardio Vascular Disease. And `age` is not significant influence factor to people `cardio` rates in 3 continuous variables.
 
 
-# Chapter 5: EDA on the joint effect of influencing factors
+# 5 Chapter 5: EDA on the joint effect of influencing factors
 
 
 From the results of above variables, we could find that some of the above variables have a significant effect on CVD. Next, we choose to graph the groups of variables with relatively large correlation coefficients one by one to explore how they affect the Cardio Vascular Disease.
@@ -574,7 +574,7 @@ First, for Active, the sample groups of  active("1") have little higher CVD rate
 
 Second, for Alco, the sample groups of no alco ("0") have little higher CVD rates.
 
-# Models Comparison: Logistic Regression
+
 ```{r}
 CVD <- read.csv2("cardio_train.csv", header = TRUE)
 str(CVD)
@@ -668,7 +668,7 @@ plot(reg.leaps, scale = "Cp", main = "Cp")
 Close results.   
 
 
-# Models Comparison: KNN
+
 
 ```{r}
 df <- CVD
@@ -783,7 +783,7 @@ recall = 0.6348
 specificity = 0.6954        
 F1_score = 0.657      
 
-### Models comparison: KNN with selected variables    
+### KNN with selected variables    
 Remove `gender` and `gluc`.   
 ```{r}
 df_num2 <- subset(df_num, select = -c(gender, gluc, prob))
@@ -968,7 +968,3 @@ rownames(tab1) <- c("KNN with selected variables", "Logistic with selected varia
 tab1 <- as.table(tab1)
 xkabledply(tab1, "Model Comparison")
 ```
-    
-    
-    
-    
