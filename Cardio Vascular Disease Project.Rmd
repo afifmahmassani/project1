@@ -1,5 +1,5 @@
 ---
-title: "Cardio Vascular Disease Project : Summary Paper"
+title: "Cardio Vascular Disease Project"
 author: "Team 1"
 date: "`r Sys.Date()`"
 output:
@@ -14,66 +14,50 @@ output:
     toc_depth: '3'
 ---
 
-```{r, include=FALSE}
+```{r}
 library(ezids)
 library(ggplot2)
 library(dplyr)
+library(ggpubr)
+```
+
+```{r}
 knitr::opts_chunk$set(warning = F, results = "hide", message = F)
 options(scientific=T, digits = 3) 
 ```
 
-```{r, include=FALSE}
-cardio_vascular_disease <- data.frame(read.csv2("cardio_train.csv", header = TRUE))
+```{r}
+CVD <- data.frame(read.csv("cardio_train.csv"))
+View(CVD)
 ```
 
 
-# Introduction to Cardiovascular Diseases (CVDs)
+## Chapter 1: Introudction to Cardiovascular Diseases (CVDs)
 
-## Basic Information About Cardiovascular Diseases (CVDs)
+# 1.1 Basic Information About Cardiovascular Diseases (CVDs)
 
 Cardiovascular Disease is a general name for numerous types of diseases including heart attack, stroke, and heart failure. In 2019 an estimated 17.9 million people died from Cardiovascular Diseases and 85% were due to heart attack and stroke.
 
-## Reasons of Choosing Cardiovascular Disease.
-
+# 1.2 Reasons of Choosing Cardiovascular Disease.
 As living standards are improving over the past few decades, having a healthy lifestyle and avoiding serious illnesses have become people’s priorities and Cardiovascular diseases are the leading cause of death globally our group is interested in finding out some facts about Cardiovascular Disease such as what exactly Cardiovascular Diseases are. What are some factors that are correlate to Cardiovascular Diseases, among those factors what have the strongest correlation to Cardiovascular Diseases? And would a healthy lifestyle help to prevent people from having cardiovascular disease? Therefore, our group choose this dataset about Cardiovascular Diseases
 
-# Summary of the Dataset
+## Chapter 2: Summary of the Dataset
 
-## About the Dataset
-
+# 2.1:About the Dataset
 The Cardiovascular Diseases dataset is extracted from Kaggle. It contains information from 70,000 records of patients that provided their age, height, weight, physical condition, and habits. Studying such data can help the public and health organizations identify potential factors that could lead to a higher chance of getting Cardiovascular Diseases, and develop appropriate strategies to reduce the number of patients.
 The dataset is cardio_train.csv. Before doing any analysis on this dataset, we did some research about what every single variable in the dataset represents, why they are included in this dataset, and what variables we will use in our model. With all those information government agents and the public will know how to adjust their habits or lifestyle to prevent getting Cardiovascular Diseases. Therefore, it is crucial to figure out current problems, and then publish the information.
 
-## Variables   
+# 2.2: Variables
 
-```{r, results='markup'}
-CVD <- cardio_vascular_disease
-CVD$gender <- factor(cardio_vascular_disease$gender)
-CVD$smoke <- factor(cardio_vascular_disease$smoke)
-CVD$alco <- factor(cardio_vascular_disease$alco)
-CVD$active <- factor(cardio_vascular_disease$active)
-CVD$cardio <- factor(cardio_vascular_disease$cardio)
-CVD$cholesterol <- factor(cardio_vascular_disease$cholesterol)
-CVD$gluc <- factor(cardio_vascular_disease$gluc)
-CVD$weight <- as.integer(cardio_vascular_disease$weight)
-CVD$age <- (cardio_vascular_disease$age/365)
-levels(CVD$cardio) <- c("No", "Yes")
-levels(CVD$gender) <- c("Female", "Male")
-levels(CVD$cholesterol) <- c("Normal", "Above Normal", "Well Above Normal")
-levels(CVD$gluc) <- c("Normal", "Above Normal", "Well Above Normal")
-levels(CVD$smoke) <- c("No", "Yes")
-levels(CVD$alco) <- c("No", "Yes")
-levels(CVD$active) <- c("No", "Yes")
-CVD <- na.omit(CVD)
+There are a total of 13 variables in this dataset, including integer, and numeric, we will only use part of the variables in our dataset. There are some outliers in this model. However, overall they do not have a strong impact on our model, and we decided not to remove them. Also for our model, we did some cleanup and convert some of the variables into factor variables so we can better process them.  
+
+```{r}
 str(CVD)
 ```
 
-The variables are the following:
-
-
 1.`id`: Respondents'id | id | int
 
-2.`Age`: Respondents' age | age | int (years)
+2.`Age`: Respondents' age | age | int (days)
 
 3.`Height`: Respondents' height | height | int (cm)
 
@@ -97,18 +81,15 @@ The variables are the following:
 
 13.`Presence or absence of cardiovascular disease`: Respondent present cardiovascular disease | cardio | int (0:No CVD currently present, 1:CVD currently present)
 
-For our data analysis, we converted `gender`, `cholesterol`, `glucose`, `smoke`, `alco`, `active` and `cardio` into factor variables. Then we converted `weight` into integer and converted `age`'s unit into year. Furthermore, we removed all the NA in the data set.    
+## Chapter 3: Descriptive Statistics
 
-# Descriptive Statistics
-
-## Categorical Variables EDA
-
-### Are there any common in CVD patients?
-
-We choose several factors from the data set and check if there are some factors that have a significant difference between CVD presented and CVD not presented.All the tables below will use percentage. 
+# 3.1 Categorical Variables EDA
+# 3.1.1 Are there any common in CVD patients?
+We choose several factors from the dataset and check if there are some factors that have a significant difference between CVD presented and CVD not presented.All the tables below will use percentage. 
 
 We start with smoke history and whether CVD are currently presented or not.
 
+Smoke
 ```{r,results='markup'}
 library(dplyr)
 smoke_con<-aggregate(CVD$cardio, by=list(CVD$smoke,CVD$cardio), FUN=length)
@@ -120,7 +101,9 @@ smoke_con$CVD_presence[smoke_con$CVD_presence=="1"] <- 'Present'
 xkabledply(smoke_con)
 ```
 
-(alcohol intake). 
+The result showed most respondents do not smoke, and almost half of the respondents have CVD currently presented. 
+
+alcohol intake 
 ```{r,results='markup'}
 alco_con<-aggregate(CVD$cardio,by=list(CVD$alco,CVD$cardio), FUN=length)
 alco_con<-rename(alco_con,alco = Group.1,CVD_presence = Group.2,CVD = x)
@@ -131,7 +114,9 @@ alco_con$CVD_presence[alco_con$CVD_presence=="1"] <- 'Present'
 xkabledply(alco_con)
 ```
 
-(Physical Activity).
+The result showed most respondents do not drink, and almost half of the respondents have CVD currently presented. 
+
+Physical Activity
 ```{r,results='markup'}
 active_con<-aggregate(CVD$cardio, by=list(CVD$active,CVD$cardio), FUN=length)
 active_con<-rename(active_con,active = Group.1,CVD_presence = Group.2,CVD = x)
@@ -142,91 +127,179 @@ active_con$CVD_presence[active_con$CVD_presence=="1"] <- 'Present'
 xkabledply(active_con)
 ```
 
-### Plot comparing different factors
+The result showed most respondents do not physical activity regularly, and most of the respondents have CVD currently presented. However, there are more people who have physical activity regularly compared to smoking and drinking. 
 
-CVD-present vs CVD-not present (smoke)   
+ # 3.1.2 Plot comparing different factors
+
+With all the tables above, we plot graphs accordingly, from the graphs we will have a better idea to see if there are any variables that may have a significant impact on getting Cardio Vascular Diseases. 
+
+Plot of Smoke & CVD
 ```{r,results='markup'}
 smoke_pic <- data.frame(table(CVD$smoke,CVD$cardio))
 names(smoke_pic) <- c("Smoke","Cardio","Count")
 ggplot(data=smoke_pic, aes(x=Smoke, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Not smoke", "1" = "Smoke"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of Smoke history and present of CVDs") + ylab("Percentage")
 ```
-CVD-present vs CVD-not present (alcohol)
+
+Plot of alcohol intake & CVD
 ```{r,results='markup'}
 alco_pic <- data.frame(table(CVD$alco,CVD$cardio))
 names(alco_pic) <- c("alco","Cardio","Count")
 ggplot(data=alco_pic, aes(x=alco, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Not Drink", "1" = "Drink"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of alcohol intake and present of CVDs") + ylab("Percentage")
 ```
-CVD-present vs CVD-not present (physical activity)
+
+Plot of physical activity & CVD
 ```{r,results='markup'}
 active_pic <- data.frame(table(CVD$active,CVD$cardio))
 names(active_pic) <- c("active","Cardio","Count")
 ggplot(data=active_pic, aes(x=active, y=Count/sum(Count)*100, fill=Cardio)) + geom_bar(stat="identity")+scale_x_discrete(labels=c("0" = "Workout regularly", "1" = "Not workout regularly"))+scale_fill_discrete(labels=c("0" = "No cvd presented", "1" = "CVD presented"))+ggtitle("Percentage of workout and present of CVDs") + ylab("Percentage")
 ```
 
-### Chi-Squared Tests
+The graphs proved the results are pretty clear that most respondents do not have a smoking history or drinking history while there are more people who have physical activity regularly. However, from the graphs the chance of  
+The graphs proved the results are pretty clear that most respondents do not have a smoking history or drinking history while there are more people who have physical activity regularly. However, from the graphs the chance of getting Cardio-Vascular Diseases seems pretty even regarding their lifestyle. We will use chi-square test below to further test if these variables are independent from whether Cardio-Vascular Diseases are presented. 
 
-We used the Chi- squared test to testify if categorical variables are related to cardio vascular disease. We set alpha as 0.1.       
-#### Test Smoking  
+# 3.1.3 Chi-Square Tests
 
-Are they independent ?    
-- $H_0$: CVD and smoking are independent.     
-- $H_1$: They are not independent.    
-```{r, include=FALSE}
+Since there are 
+The results of the chi-square test result are listed below accordingly. 
+
+
+Chi-square test for Smoke & CVD presence
+
+Are they independent?
+- H0: CVD presence and smoking are independent.
+- H1: They are not independent.
+
+```{r,results='hide'}
 smoke_cvd = table(CVD$cardio, CVD$smoke)
-smoke_cvd
 ```
 
 ```{r,results='markup'}
 sctest<- chisq.test(smoke_cvd)
 sctest
 ```
-Since p-value = `r format(sctest$p.value, scientific = T)` < 0.1, we reject the null hypothesis, so `smoke` has impact on `cardio`.   
 
-#### Test Alcohol  
+Since the p-value is 4e-05 < 0.05, we reject the null hypothesis, therefore smoking has a significant impact on whether cardio-vascular diseases are presented. 
 
-Are they independent ?    
-- $H_0$: CVD and drinking alcohol are independent.     
-- $H_1$: They are not independent.   
-```{r,include=FALSE}
+Chi-square test for Alcohol intake & CVD presence
+
+Are they independent?
+- H0: CVD presence and drinking are independent.
+- H1: They are not independent.
+
+```{r,results='hide'}
 al_cvd = table(CVD$cardio, CVD$alco)
 ```
 ```{r,results='markup'}
 alctest<- chisq.test(al_cvd)
 alctest
 ```
-Since p-value = `r format(alctest$p.value, scientific = T` < 0.1, we reject the null hypothesis, so `alco` has impact on `cardio`.   
 
-#### Test Physical Activity  
+Since the p-value is 0.05 ≤ 0.05, we reject the null hypothesis, therefore drink has a significant impact on whether cardio-vascular diseases are presented. 
 
-Are they independent ?    
-- $H_0$: CVD and physical activity are independent.     
-- $H_1$: They are not independent.   
-```{r,include=FALSE}
+Chi-square test for Physical Activity & CVD presence
+
+Are they independent?
+- H0: CVD presence and physical activity are independent.
+- H1: They are not independent.
+
+```{r,results='hide'}
 act_cvd = table(CVD$cardio, CVD$active)
 ```
 ```{r,results='markup'}
 act_test<- chisq.test(act_cvd)
 act_test
 ```
-Since p-value = `r format(act_test$p.value, scientific = T` < 0.1, we reject the null hypothesis, so `active` has an impact on `cardio`.
+
+Since the p-value is 2e-16 < 0.05, we reject the null hypothesis, therefore physical activity has a significant impact on whether cardio-vascular diseases are presented. 
+
+# 3.2 Continuous Variables EDA
+# Chapter 4: Continuous Variables EDA to Cardiovascular Diseases (CVDs)
+
+After a brief overview of the dataset, it tells that there are 3 continuous variables, age, height and weight.
+
+## 4.1 KDE plot of continuous variables
 
 
-## Continuous Variables EDA to Cardiovascular Diseases (CVDs)
 
-After a brief overview of the data set, it tells that there are 3 continuous variables, age, height and weight.
+KDE plot represents the data using a continuous probability density curve in one or more dimensions. We can easily observe the distribution of samples with kde plot
 
-### KDE plot of continuous variables
 
-KDE plot represents the data using a continuous probability density curve in one or more dimensions. We can easily observe the distribution of samples with KDE plot.    
+
+
+
+
+
 
 ```{r}
-CVD_new<- CVD
+
+str(CVD)
+
+```
+
+
+```{r}
+
+
+CVD$cardio <- factor(CVD$cardio)
+str(CVD)
+
+```
+
+
+
+
+
+
+```{r}
+
+CVD_new<- data.frame(CVD)
+CVD_new
+```
+
+
+```{r}
+
+
 levels(CVD_new$cardio) <- c("No CVD Present", "CVD Present") 
+str(CVD_new)
+
 CVD_new$cardio[CVD_new$cardio=="0"] <- 'No CVD Present'
 CVD_new$cardio[CVD_new$cardio=="1"] <- 'CVD Present'
-cols<-c("No CVD Present"="green","CVD Present"="blue")
-str(CVD_new)
+CVD_new
 ```
+
+
+```{r}
+
+
+levels(CVD_new$cardio) <- c("No CVD Present", "CVD Present") 
+str(CVD_new)
+
+CVD_new$cardio[CVD_new$cardio=="0"] <- 'No CVD Present'
+CVD_new$cardio[CVD_new$cardio=="1"] <- 'CVD Present'
+CVD_new
+```
+
+
+
+
+
+
+
+
+
+
+```{r, results="markup"}
+cols<-c("No CVD Present"="green","CVD Present"="blue")
+
+```
+
+
+
+
+
+
+
 ```{r, results="markup"}
 age_kdeplot <- ggplot(data = CVD_new, aes(x = age, color =cardio)) + 
             geom_density(aes(fill = cardio), alpha = 0.8) + 
@@ -235,78 +308,66 @@ age_kdeplot <- ggplot(data = CVD_new, aes(x = age, color =cardio)) +
                labs(x="age", y="density") +
                 theme(legend.position="top")
 age_kdeplot
+
+
 ```
+
+
 ```{r, results="markup"}
-height_kdeplot <- ggplot(data = CVD_new, aes(x = height, color = cardio)) + 
+age_kdeplot <- ggplot(data = CVD_new, aes(x = height, color = cardio)) + 
             geom_density(aes(fill = cardio), alpha = 0.8) + 
              scale_fill_manual(values =cols) +
               labs(title="KDEplot for height") +
                labs(x="height", y="density") +
                 theme(legend.position="top")
-height_kdeplot
+age_kdeplot
+
+
 ```
+
+
+
 ```{r, results="markup"}
-weight_kdeplot <- ggplot(data = CVD_new, aes(x = weight, color = cardio)) + 
+age_kdeplot <- ggplot(data = CVD_new, aes(x = weight, color = cardio)) + 
             geom_density(aes(fill = cardio), alpha = 0.8) + 
              scale_fill_manual(values= cols) +
               labs(title="KDEplot for weight") +
                labs(x="weight", y="density") +
                 theme(legend.position="top")
-weight_kdeplot
+age_kdeplot
+
+
 ```
-As we can see from KDE plot for age, people with higher age are more likely to have CVD. And from KDE plot for height  and weight ,  we can find that  people with CVD and without CVD have very similar distributions. From these 3 KDE plots, which means,CVD may be positive correlated with age. Finally, weight may only make a little attribution to people presenting CVD.    
 
-### Logistic regression for continuous variables
+As we can see from kdeplot for age, people with higher age are more likely to have CVD. And from kdeplot for height  and weight ,  we can find that  people with CVD and without CVD have very similar distributions. From these 3 kde plots, which means,CVD may be positive correlated with age. Finally, weight may only make a little attribution to people presenting CVD.
 
-The logit model is often used for classification and predictive analytics. Logistic regression estimates the probability of an event occurring, such as voted or didn’t vote, based on a given data set of independent variables. Since the outcome is a probability, the dependent variable is bounded between 0 and 1(binary outcome). In this case, `cardio`  is the binary outcome; as s result, we choose logistic regression to predict.     
+## 4.2 Logistic regression
 
-```{r}
+The logit model is often used for classification and predictive analytics. Logistic regression estimates the probability of an event occurring, such as voted or didn’t vote, based on a given dataset of independent variables. Since the outcome is a probability, the dependent variable is bounded between 0 and 1(binary outcome). In this case, "cardio"  is the binary outcome; as s result, we choose logistic regression to predict.
+
+
+```{r, results="markup"}
+
+
 lm1 <- glm(cardio~age, family = binomial(link = "logit"), data = CVD)
 lm2 <- glm(cardio~age + weight, family = binomial(link = "logit"), data = CVD)
 lm3 <- glm(cardio~age+ height + weight, family = binomial(link = "logit"), data = CVD)
-```
-
-This is the summary of model 1.
-
-```{r, results="markup"}
-xkabledply(lm1, title="summary of model 1")
-```
-This is the summary of model 2.
-
-```{r, results="markup"}
-xkabledply(lm2, title="summary of model 2")
-```
-This is the summary of model 3.
-
-```{r, results="markup"}
-xkabledply(lm3, title="summary of model 3")
-```
-
-```{r, results="markup"}
-
 anovat <- anova(lm1,lm2,lm3, test="LRT")
 anovat
+
 ```
 
-As it is shown above, with small p-values, model 3 is the best.     
+As it is shown above, model 2 and 3 is better than model 1 . In addition, model 2 and 3 is at 100% significant level.
 
 
-### AUC and ROC Curve
+
+## 4.3 AUC and ROC Curve
 
 We can use AUC and ROC to measure model 2 and model 3. AUC (Area Under The Curve) - ROC (Receiver Operating Characteristics) curve is a performance measurement for the classification problems at various threshold settings. ROC is a probability curve and AUC represents the degree or measure of separability. It tells how much the model is capable of distinguishing between classes. Higher the AUC, the better the model is at predicting 0 classes as 0 and 1 classes as 1. For summarize, the Higher the AUC, the better the model is.
 
-For model 1:
-```{r, results="markup"}
-prob <- predict(lm1,CVD, type = c("response"))
-CVD$prob <- prob
-library(pROC)
-g<- roc(cardio~prob, data = CVD)
-plot(g, main = "ROC curve of model 1")
-auc(CVD$cardio, prob)
-```
-The AUC value is 0.635 < 0.8. We think this is not a good fit.   
-
 For model 2:
+
+
 ```{r, results="markup"}
 prob <- predict(lm2,CVD, type = c("response"))
 CVD$prob <- prob
@@ -315,9 +376,19 @@ g<- roc(cardio~prob, data = CVD)
 plot(g, main = "ROC curve of model 2")
 auc(CVD$cardio, prob)
 ```
-The AUC value is 0.668. As 0.668 is less than 0.8, this model is not good enough.    
+The AUC value is 0.668. As 0.668 is much less than 1, this model is not good enough.
+
+
+Below is the summary of model 2.
+
+```{r, results="markup"}
+xkabledply(lm2, title="summary of model 2")
+```
 
 For model 3:
+
+
+
 ```{r, results="markup"}
 prob1 <- predict(lm3,CVD, type = c("response"))
 CVD$prob1 <- prob1
@@ -326,122 +397,189 @@ g<- roc(cardio~prob1, data = CVD)
 plot(g, main = "ROC curve of model 3")
 auc(CVD$cardio, prob1)
 ```
-The AUC value is 0.671. As 0.671 is less than 0.8 and 0.671 is more than 0.668, this model is not good enough but is better than model 2.    
+The AUC value is 0.671. As 0.671 is much less than 1 and 0.671 is more than 0.668, this model is not good enough but is better than model 2.
+
+
+Below is the summary of model 3.
+
+```{r, results="markup"}
+xkabledply(lm3, title="summary of model 3")
+```
 
 In the 3 continuous variables, `cardio` has positive correlation with `age` and `weight` ; it also has negative correlation with`height` . It means when a person with  higher `weight` and shorter `height`, he has more probabilities to have Cardio Vascular Disease. And `age` is not significant influence factor to people `cardio` rates in 3 continuous variables.
 
-# EDA on the joint effect of influencing factors
+
+# 5 Chapter 5: EDA on the joint effect of influencing factors
+
 
 From the results of above variables, we could find that some of the above variables have a significant effect on CVD. Next, we choose to graph the groups of variables with relatively large correlation coefficients one by one to explore how they affect the Cardio Vascular Disease.
 
-## Simple correlations
+## 5.1 Simple correlations
 
-As most of variables are factors, we check their Spearman correlations.    
+As most of variables are factors, we check their Spearman correlations.
 
-First, we convert all the categorical variables to numeric.   
+```{r}
+show(CVD_new)
+```
+
+
+
+
 ```{r, results="markup"}
+
 CVDNum = CVD
+
+str(CVDNum)
+```
+
+```{r, results="markup"}
+
+# convert categorical variable as numeric for spearman method
 for(i in 1:13){
   # age, height, weight
   if (!(i %in% c(2, 4, 5))){
     CVDNum[,i] = as.numeric(CVDNum[,i])
               }
 }
-CVDNum$prob1 <- NULL
-CVDNum$prob <- NULL
 str(CVDNum)
+
 ```
 
 ```{r, results="markup"}
 
-CVDcor <- cor(subset(CVDNum, select=-id), method="spearman")
-
+# corrplot with spearman method for categorical variables
+CVDcor <- cor(subset(CVDNum, select=-c(id, prob)), method="spearman")
+#CVDcor
 loadPkg("corrplot")
-
+#corrplot.mixed(CVDcor, tl.pos = "lt", number.cex = .5, tl.cex=0.8)
 corrplot(CVDcor, type="lower", addCoef.col="black", number.cex=0.5, tl.cex=0.7,title="Spearman Correlation for CVD", mar=c(0,0,1,0))
+
 ```
 Larger circle means higher correlation. We can see that CVD has negative correlation with cholesterol and height, which means that person who has shorter height or has high cholesterol is less likely to have Cardio Vascular Disease. Person who smoke and has high level cholesterol is also more likely to have CVD. So it makes sense that cholesterol  and smoke have positive correlation, which means most person who smoke also have high level cholesterol .
 
-## Will Age influence the CVD rate with other variables?
+## 5.2 Will Age influence the CVD rate with other variables?
 
-```{r, include=F}
+
+```{r}
 CVD_new$gluc<- factor(CVD_new$gluc)
 CVD_new$gender<- factor(CVD_new$gender)
 CVD_new$smoke<- factor(CVD_new$smoke)
 CVD_new$alco<- factor(CVD_new$alco)
 CVD_new$active <- factor(CVD_new$active)
+str(CVD_new)
 
+```
+
+```{r}
 CVD_factor<- data.frame(CVD_new)
 CVD_factor
+```
+
+```{r}
 
 library(patchwork)
 ```
 
-```{r}
+```{r, results="markup"}
+
+
 a1 <- ggplot(CVD_factor,aes(x = smoke , y = age , fill = cardio)) +
   geom_violin(alpha = 0.5, aes(linetype=NA)) +
   xlab("Smoke") + ylab("Age")
+
 
 a2 <- ggplot(CVD_factor,aes(x = alco , y = age , fill = cardio)) +
   geom_violin(alpha = 0.5, aes(linetype=NA)) +
   xlab("Alco") + ylab("Age")
 
+
 a3 <- ggplot(CVD_factor, aes(x=height, y=age, color= cardio)) +
   geom_point(size=.5,alpha=0.4)
+
+
 ```
 
 ```{r, results="markup"}
+
+
 a3/ (a1+a2) + plot_annotation(title = 'Age Plot')
 ```
+First, Age and height show no correlation.
 
-First, Age and height show no correlation.    
+Second, for Smoke, the sample groups of smoke("1") and order age have higher CVD rates .
 
-Second, for Smoke, the sample groups of smoking and older age have higher CVD rates.     
+Finally, for cholesterol, people are also prone to CVD when drink alco("1") and order age.
 
-Finally, for cholesterol, people are also prone to CVD when drinking and older age.    
+## 5.3 Will Height influence the CVD rate with other variables?
 
-## Will Height influence the CVD rate with other variables?
 
-```{r}
+```{r, results="markup"}
+
+
 h1 <- ggplot(CVD_factor,aes(x = active , y = height , fill = cardio)) +
   geom_violin(alpha = 0.5, aes(linetype=NA)) +
   xlab("Active") + ylab("Height")
 
+
+
 h2 <- ggplot(CVD_factor, aes(x=weight, y=height, color= cardio)) +
   geom_point(size=0.5,alpha=0.4)
+
+
 ```
 
+
+
 ```{r, results="markup"}
+
+
 h1/ h2 + plot_annotation(title = 'Height Plot')
 ```
 
-First, for Active, the sample groups of having physical activity have little higher CVD rates.    
+First, for Active, the sample groups of active("1") have little higher CVD rates.
 
-Second, weight and height show a little positive correlation.   
+Second, weight and height show a little positive correlation .
 
-## Will Weight influence the CVD rate with other variables?
 
-```{r}
+
+## 5.4 Will Weight influence the CVD rate with other variables?
+
+
+```{r, results="markup"}
+
+
 w1 <- ggplot(CVD_factor,aes(x = active , y = weight , fill = cardio)) +
   geom_violin(alpha = 0.5, aes(linetype=NA)) +
   xlab("Active") + ylab("Weight")
 
+
 w2 <- ggplot(CVD_factor,aes(x = alco , y = weight , fill = cardio)) +
   geom_violin(alpha = 0.5, aes(linetype=NA)) +
   xlab("Alco") + ylab("Weight")
+
+
+
+
 ```
 
+
+
 ```{r, results="markup"}
+
+
 w1/ w2 + plot_annotation(title = 'Weight Plot')
 ```
 
-First, for Active, the sample groups of having activity have little higher CVD rates.     
+First, for Active, the sample groups of  active("1") have little higher CVD rates 
 
-Second, for Alcohol, the sample groups of no alcohol ("0") have little higher CVD rates.   
+Second, for Alco, the sample groups of no alco ("0") have little higher CVD rates.
 
-# Models Comparison: Logistic Regression
 
-This is how we convert to factor.
+```{r}
+CVD <- read.csv2("cardio_train.csv", header = TRUE)
+str(CVD)
+```
+
 ```{r}
 df <- CVD
 df$id <- NULL
@@ -465,32 +603,31 @@ df <- na.omit(df)
 
 str(df)
 ``` 
-This is how we do the logistic regression.
+
 ```{r, results='markup'}
 logistic_all <- glm(cardio ~ age + gender + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
 summary(logistic_all)
 ```
-This is how we do the logistic regression.
-```{r}
+
+```{r, results='markup'}
 logistic_1 <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + gluc + smoke + alco + active, data = df, family = "binomial")
 summary(logistic_1)
 ```
-This is how we do the logistic regression.
+
 ```{r, results='markup'}
 logistic_2 <- glm(cardio ~ age + height + weight + ap_hi + ap_lo + cholesterol + smoke + alco + active, data = df, family = "binomial")
 summary(logistic_2)
 ```
-
-This is how we compute the coefficient.
 ```{r}
 expcoef = exp(coef(logistic_2))
 summary(expcoef)
 xkabledply( as.table(expcoef), title = "Exponential of coefficients in Cardio")
 ```
-This is how we create the confusion matrix.
+
 ```{r, results='markup'}
 loadPkg("regclass")
 confusion_matrix(logistic_2)
+xkabledply( confusion_matrix(logistic_2), title = "Confusion matrix from Logit Model" )
 cfmatrix1 = confusion_matrix(logistic_2)
 accuracy1 <- (cfmatrix1[1,1]+cfmatrix1[2,2])/cfmatrix1[3,3]
 precision1 <- cfmatrix1[2,2]/(cfmatrix1[2,2]+cfmatrix1[1,2])
@@ -506,7 +643,7 @@ F1_score1
 ```{r}
 xkabledply( confusion_matrix(logistic_2), title = "Confusion matrix from Logit Model" )
 ```
-This is how we plot the ROC curve.
+
 ```{r, results='markup'}
 loadPkg("pROC")
 prob <- predict(logistic_2, type = "response")
@@ -516,31 +653,23 @@ auc(h)
 plot(h)
 ```
 Not a good fit.   
-
-# Feature Selection   
-
-This is how we plot the adjusted R square.
+#Feature Selection   
 ```{r}
 loadPkg("leaps")
 reg.leaps <- regsubsets(cardio ~ ., data = df, nbest = 1, method = "exhaustive")
 plot(reg.leaps, scale = "adjr2", main = "Adjusted R^2")
 ```
-
-This is how we plot the BIC.
-
 ```{r}
 plot(reg.leaps, scale = "bic", main = "BIC")
 ```
-
-This is how we plot the Cp.
 ```{r}
 plot(reg.leaps, scale = "Cp", main = "Cp")
 ```
 Close results.   
 
-# Models Comparison: KNN
 
-This is how we convert to factor.
+
+
 ```{r}
 df <- CVD
 df$id <- NULL
@@ -574,7 +703,7 @@ for(i in 1:12){
 }
 str(df_num)
 ```
-This is how we convert variables to numeric.
+
 ```{r}
 #convert variables to numeric
 scale1 <- subset(df_num, select = -cardio)
@@ -590,24 +719,31 @@ df.testLabels <- df[df_sample==2, 12]
 str(df_train)
 str(df_test)
 ```
-This is how we choose K.
+
 ```{r, echo=FALSE}
 loadPkg("class")
 chooseK = function(k, train_set, val_set, train_class, val_class){
   
+  # Build knn with k neighbors considered.
   set.seed(1)
-  class_knn = knn(train = train_set,   
-                  test = val_set,      
-                  cl = train_class,   
-                  k = k)                 
+  class_knn = knn(train = train_set,    #<- training set cases
+                  test = val_set,       #<- test set cases
+                  cl = train_class,     #<- category for classification
+                  k = k) #,                #<- number of neighbors considered
+                  # use.all = TRUE)       #<- control ties between class assignments. If true, all distances equal to the k-th largest are included
+  
   tab = table(class_knn, val_class)
+  #cm = confusionMatrix(class_knn, reference = cus_test_y ) # from caret library
+  # print.confusionMatrix(cm)
+  # 
+  #cmaccu = cm$overall['Accuracy']
+  
+  # Calculate the accuracy.
   accu = sum(tab[row(tab) == col(tab)]) / sum(tab)                         
   cbind(k = k, accuracy = accu)
 }
 ```
 
-
-This is how we plot the KNN.
 ```{r, results='markup'}
 knn_different_k = sapply(seq(1, 21, by = 2),  
                          function(x) chooseK(x, 
@@ -626,15 +762,21 @@ ggplot(knn_different_k,
 
 xkabledply((knn_different_k))
 ```
+`k=9` is a decent choice.
 `k=17` is a decent choice.
-
 ```{r, results='markup'}
+pred <- knn(train = df_train, test = df_test, cl=df.trainLabels, k=9)
 pred <- knn(train = df_train, test = df_test, cl=df.trainLabels, k=17)
 pred
 
 loadPkg("gmodels")
 churnPredCross <- CrossTable(df.testLabels, pred, prop.chisq = FALSE)
 ```
+accuracy = 0.6583     
+precision = 0.6733     
+recall = 0.6308     
+specificity = 0.6866      
+F1_score = 0.6514      
 accuracy = 0.6648     
 precision = 0.6809    
 recall = 0.6348     
@@ -662,8 +804,6 @@ df.testLabel2 <- scale2[df_sample2==2, 10]
 ```
 
 ### Select K    
-
-This is how we plot the KNN.
 ```{r, results='markup'}
 knn_different_k2 = sapply(seq(1, 21, by = 2),  
                          function(x) chooseK(x, 
@@ -684,7 +824,6 @@ xkabledply((knn_different_k2))
 ```
 
 We should better select value `k=13` here as it has the highest accuracy.  
-
 ```{r}
 pred2 <- knn(train = df_train2, test = df_test2, cl = df.trainLabel2, k = 13)
 knn.roc.prob <- attr(knn(train = df_train2, test = df_test2, cl = df.trainLabel2, k = 13, prob = T), 'prob')
@@ -702,8 +841,6 @@ specificity = 0.701
 F1_score = 0.6616
 
 #Comparison
-
-This is how we compare.
 ```{r, results='markup'}
 tab <- matrix(c(0.6583, 0.6733, 0.6308, 0.6866, 0.6514, 0.6717, 0.6877, 0.6432, 0.701, 0.6616, 0.722, 0.743, 0.677, 0.767, 0.708), ncol = 5, byrow = TRUE)
 colnames(tab) <- c("Accuracy", "Precision", "Recall", "Specificity", "F1 Score")
@@ -712,8 +849,6 @@ tab <- as.table(tab)
 xkabledply(tab, "Models Comparison")
 ```
 
-
-# Models Comparison: Classification Tree
 
 ```{r}
 df <- CVD
@@ -782,8 +917,6 @@ unloadPkg("caret")
 xkabledply(confusionMatrixResultDf, title = "Cardio Classificantion Trees summary with varying MaxDepth")
 ```
 
-
-This is how we plot a classification tree.
 ```{r}
 set.seed(1000)
 cardiofit <- rpart(cardio ~ age + weight + ap_lo + height + cholesterol, data = df_num, method = "class", control = list(maxdepth=7))
@@ -791,7 +924,7 @@ printcp(cardiofit)
 plotcp(cardiofit)
 summary(cardiofit)
 ```
-This is how we plot a classification tree for cardio.
+
 ```{r}
 plot(cardiofit, uniform = TRUE, main = "Classification Tree for Cardio")
 text(cardiofit, use.n = TRUE, all = TRUE, cex = 1)
@@ -809,8 +942,6 @@ cm$byClass
 ```{r}
 xkabledply(cm$table, "confusion matrix")
 ```
-This is how we plot a fancy plot.
-
 ```{r}
 loadPkg("rpart.plot")
 loadPkg("rattle")
@@ -819,7 +950,6 @@ fancyRpartPlot(cardiofit)
 ```
 #ROC Curve   
 
-This is how we plot the ROC curve.
 ```{r}
 library(rpart)
 rp <- rpart(cardio ~., data = df_num)
@@ -830,7 +960,7 @@ plot(performance(pred, "tpr", "fpr"), main = "ROC Cardio")
 auc = performance(pred, 'auc')
 slot(auc, 'y.values')
 ```
-This is how we create a comparison table.
+
 ```{r}
 tab1 <- matrix(c(0.672, 0.688, 0.643, 0.701, 0.662, 0.722, 0.743, 0.677, 0.767, 0.708, 0.702, 0.677, 0.771, 0.632, 0.721), ncol = 5, byrow = TRUE)
 colnames(tab1) <- c("Accuracy", "Precision", "Recall", "Specificity", "F1 Score")
@@ -838,26 +968,3 @@ rownames(tab1) <- c("KNN with selected variables", "Logistic with selected varia
 tab1 <- as.table(tab1)
 xkabledply(tab1, "Model Comparison")
 ```
-
-
-We conducted a research about cardiovascular diseases. The main question was "does healthy lifestyle work?".
-
-After analyzing the dataset and the dataframe, we came up with the following conclusions.As we said we are looking through a set of data showing the factors impacting the cardio vascular disease. Those factors are smoking, alcohol intake, physical activity, age, weight, height, blood pressure and cholesterol.
-
-According to the EDA analysis, the CVD is present in those who do not smoke, do not drink and do not workout.
-According to chisquare we found out that smoke, alcohol intake and physical activity have an impact on CVD
-According to the KDE plot, old people and weight close to 100 have CVD.
-According to spearman correlation, cholesterol doesnt have an impact on CVD
-
-We also conducted logistic regression, KNN and classification Tree;
-The logistic regression showed that age, weight, blood pressure and cholesterol have an impact on CVD.
-The KNN showed that age and weight influence CVD.
-The classification tree showed that age, weight, height, blood pressure and cholesterol have an impact on CVD.
-
-From these conclusions we can get the characteristics of CVD group pf people which is no smoking, no drinking, no physical activity, old people and weight close to 100. This means that a healthy lifestyle does not really work in this case.
-
-Combined with the above analysis, CVD is mainly due to age and weight.
-
-Some suggestions for the high level of CVD group will be to smoke, drink,workout and lose weight. This means a person can smoke and drink but has to do some physical activity to loose weight.
-
-
